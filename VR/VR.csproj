@@ -130,7 +130,6 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Route.cs" />
-    <Compile Include="Terrain.cs" />
     <Compile Include="Forms\TerrainGrid.cs">
       <SubType>Form</SubType>
     </Compile>

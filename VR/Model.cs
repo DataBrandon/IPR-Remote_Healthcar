@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,54 +7,29 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace VR {
-    class Model {
-        private Connector connector;
-        public string modelName;
+    [Serializable]
+    public class Model {
+        public Connector connector;
+        public string modelname, filePath;
         public string uuid;
+        public double x, y, z, s;
+        public int zRotation;
 
-        public Model(Connector connector, string modelname, string filePath, int x, int y, int z) {
+        public Model(Connector connector, string modelname, string filePath, double x, double y, double z, double s, int zRotation) {
             this.connector = connector;
-            this.modelName = modelname;
-            dynamic message = new {
-                id = "tunnel/send",
-                data = new {
-                    dest = connector.tunnelID,
-                    data = new {
-                        id = "scene/node/add",
-                        data = new {
-                            name = modelname,
-                            components = new {
-                                transform = new {
-                                    position = (new int[3] { x, y, z }),
-                                    scale = 1,
-                                    rotation = (new int[3] { 0, 0, 0 })
-                                },
-                                model = new {
-                                    file = filePath,
-                                    cullbackfaces = true,
-                                    animated = false,
-                                    animation = "animationname"
-                                },
-                                panel = new {
-                                    size = (new int[2] { 1, 1 }),
-                                    resolution = (new int[2] { 512, 512 }),
-                                    background = (new int[4] { 1, 1, 1, 1 })
-                                }
-                            }
-                        }
-                    }
-                }
-            };
-
-            connector.SendMessage(message);
-            JObject jObject = connector.ReadMessage();
-            uuid = (string)jObject.SelectToken("data").SelectToken("data").SelectToken("data").SelectToken("uuid");
-            //Console.WriteLine(jObject);
+            this.modelname = modelname;
+            this.filePath = filePath;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.s = s;
+            this.zRotation = zRotation;
         }
 
+        [JsonConstructor]
         public Model(Connector connector, string modelname, string uuid) {
             this.connector = connector;
-            this.modelName = modelname;
+            this.modelname = modelname;
             this.uuid = uuid;
         }
 
@@ -76,6 +52,98 @@ namespace VR {
                 connector.SendMessage(message);
                 //JObject jObject = connector.ReadMessage();
                 //Console.WriteLine(jObject);
+            }
+        }
+
+        public void Load()
+        {
+            dynamic message = new
+            {
+                id = "tunnel/send",
+                data = new
+                {
+                    dest = connector.tunnelID,
+                    data = new
+                    {
+                        id = "scene/node/add",
+                        data = new
+                        {
+                            name = modelname,
+                            components = new
+                            {
+                                transform = new
+                                {
+                                    position = (new double[3] { x, y, z }),
+                                    scale = s,
+                                    rotation = (new int[3] { 0, zRotation, 0 })
+                                },
+                                model = new
+                                {
+                                    file = filePath,
+                                    cullbackfaces = true,
+                                    animated = false,
+                                    animation = "animationname"
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            connector.SendMessage(message);
+            JObject jObject = connector.ReadMessage();
+            uuid = (string)jObject.SelectToken("data").SelectToken("data").SelectToken("data").SelectToken("uuid");
+            //Console.WriteLine(jObject);
+        }
+
+        public void Reload(Connector connector)
+        {
+            this.connector = connector;
+            if(filePath != null)
+            {
+                dynamic message = new
+                {
+                    id = "tunnel/send",
+                    data = new
+                    {
+                        dest = connector.tunnelID,
+                        data = new
+                        {
+                            id = "scene/node/add",
+                            data = new
+                            {
+                                name = modelname,
+                                components = new
+                                {
+                                    transform = new
+                                    {
+                                        position = (new double[3] { x, y, z }),
+                                        scale = s,
+                                        rotation = (new int[3] { 0, zRotation, 0 })
+                                    },
+                                    model = new
+                                    {
+                                        file = filePath,
+                                        cullbackfaces = true,
+                                        animated = false,
+                                        animation = "animationname"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+
+                connector.SendMessage(message);
+                JObject jObject = connector.ReadMessage();
+                uuid = (string)jObject.SelectToken("data").SelectToken("data").SelectToken("data").SelectToken("uuid");
+                //Console.WriteLine(jObject);
+            }
+            else
+            {
+                this.connector = connector;
+                this.modelname = modelname;
+                this.uuid = uuid;
             }
         }
     }
