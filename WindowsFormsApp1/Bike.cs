@@ -33,7 +33,7 @@ namespace Remote_Healtcare_Console
             if(serialCommunicator.IsConnected() && start) {
 
                 WarmingUp(2);
-                new Thread()
+                //new Thread();
                 
                 MainTestStart(6);
                 CoolingDownStart(1);
@@ -91,7 +91,6 @@ namespace Remote_Healtcare_Console
         public override void Start() {
             start = true;
             serialCommunicator.OpenConnection();
-            ChangesThread.Start();
         }
 
         public void WarmingUp(int minutes)
@@ -201,7 +200,7 @@ namespace Remote_Healtcare_Console
                 }
             });
 
-            SetDataToGUI();
+            //SetDataToGUI();
         }
 
 
@@ -211,9 +210,7 @@ namespace Remote_Healtcare_Console
 
         public double calculateVO2MaX()
         {
-           
-
-
+            return 0.0;
         }
     }
 }

@@ -31,14 +31,14 @@ namespace Remote_Healtcare_Console
             try {
                 console.Invoke((MethodInvoker)delegate {
                     // Running on the UI thread
-                    console.setTimerLabel((int) whichtimer. /1000);
-                    console.SetRoundMin(bikeData.Rpm.ToString());
-                    console.SetSpeed(bikeData.Speed.ToString());
-                    console.SetDistance((bikeData.Distance * 100).ToString());
-                    console.SetResistance(bikeData.Resistance.ToString());
-                    console.SetEnergy(bikeData.Energy.ToString());
-                    console.SetTime(((bikeData.Time < TimeSpan.Zero) ? "-" : "") + bikeData.Time.ToString(@"mm\:ss"));
-                    console.SetWatt(bikeData.Power.ToString());
+                    //console.setTimerLabel((int) whichtimer. /1000);
+                    //console.SetRoundMin(bikeData.Rpm.ToString());
+                    //console.SetSpeed(bikeData.Speed.ToString());
+                    //console.SetDistance((bikeData.Distance * 100).ToString());
+                    //console.SetResistance(bikeData.Resistance.ToString());
+                    //console.SetEnergy(bikeData.Energy.ToString());
+                    //console.SetTime(((bikeData.Time < TimeSpan.Zero) ? "-" : "") + bikeData.Time.ToString(@"mm\:ss"));
+                    //console.SetWatt(bikeData.Power.ToString());
                 });
             }
             catch (InvalidOperationException e) {
