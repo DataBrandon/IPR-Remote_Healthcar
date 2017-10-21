@@ -226,10 +226,9 @@ namespace Remote_Healtcare_Console
             else
                 Stop();
 
-            if(bikeData.Pulse >= console.user.maxHF)
-            {
-                Stop();
-            }
+            if(console.user.maxHF != null)
+                if (bikeData.Pulse >= console.user.maxHF)
+                    Stop();
         }
         
         public double calculateVO2MaX()

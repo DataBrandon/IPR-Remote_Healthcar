@@ -14,7 +14,7 @@ namespace UserData {
         public UserType Type { get; set; }
         private int age;
         private bool male;
-        public int maxHF;
+        public int? maxHF;
         
         public User(string username, string password, string fullName, string hashcode, UserType type) {
             this.username = username;
@@ -25,7 +25,7 @@ namespace UserData {
         }
 
         [Newtonsoft.Json.JsonConstructor]
-        public User(string username, string password, string fullName, string hashcode, UserType type, int age,bool male)
+        public User(string username, string password, string fullName, string hashcode, UserType type, int age,bool male, int maxHF)
         {
             this.username = username;
             this.password = password;
@@ -34,6 +34,7 @@ namespace UserData {
             this.Type = type;
             this.age = age;
             this.male = male;
+            this.maxHF = maxHF;
         }
 
         public User(string username, string password, string fullName) {
