@@ -206,8 +206,15 @@ namespace Remote_Healtcare_Console
             }
             else if (MainTestState)
             {
-                if (bikeData.Time.Seconds % 15 == 0 || bikeData.Time.Seconds == 0)
+                if (bikeData.Time.Seconds == 0 || (bikeData.Time.Seconds % 15 == 0 && bikeData.Time.Minutes >= 4) )
+                {
+                    if (RecordedHF.Count > 0)
+                        if (RecordedHF.Last() - bikeData.Pulse > 5 || RecordedHF.Last() - bikeData.Pulse < -5)
+                            if (bikeData.Resistance - 25 > 130)
+                                SetResistance(bikeData.Resistance - 25);
+
                     RecordedHF.Add(bikeData.Pulse);
+                }
                 if (bikeData.Pulse <= 130 && bikeData.Time.Seconds % 10 == 0)
                     SetResistance(bikeData.Resistance + 25);
             }
