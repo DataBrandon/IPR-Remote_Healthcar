@@ -57,46 +57,18 @@ namespace Remote_Healtcare_Console
             CooldownState = false;
         }
 
-        private void starttest()
+        private void Starttest()
         {
             Timer secondTimer = new Timer(1000);
          
             if(serialCommunicator.IsConnected() && start) {
 
-                //new Thread();
-                //Thread.Sleep(500);
                 Reset();
                 Thread.Sleep(500);
                 SetManual();
                 Thread.Sleep(500);
                 Run();
             }
-        }
-
-        private void SetChanges()
-        {
- //           JObject obj = client.ReadMessage();
-//
-  //          switch ((string)obj["id"])
-    //        {
-      //          case ("setResistance"):
-      //              int resistance = (int)obj["data"]["resistance"];
-       //             SetResistance(resistance);
-       //             break;
-        //        case ("chat"):
-         //           string message = (string)obj["data"]["message"];
-         //           new Thread(() => console.AddMessage(message)).Start();
-          //          break;
-           //     case "setdoctor":
-            //        client.SendMessage(obj);
-             //       break;
-             //   case ("start"):
-             //       BikeThread.Start();
-             //       break;
-             //   case ("stop"):
-              //      BikeThread.Abort();
-              //      break;
-            //}
         }
 
         public override void Start() {
