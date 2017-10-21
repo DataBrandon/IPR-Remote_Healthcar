@@ -43,6 +43,7 @@ namespace Remote_Healtcare_Console
             WarmingUpState = false;
             MainTestTimer.Start();
             MainTestState = true;
+            console.SetFaseLabel("Main test");
         }
 
         private void MainTestTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -50,11 +51,13 @@ namespace Remote_Healtcare_Console
             MainTestState = false;
             CooldownTimer.Start();
             CooldownState = true;
+            console.SetFaseLabel("Cooling down");
         }
 
         private void CooldownTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             CooldownState = false;
+            console.SetFaseLabel("Done!");
         }
 
         private void Starttest()
@@ -85,6 +88,7 @@ namespace Remote_Healtcare_Console
         private void Run()
         {
             WarmingUpState = true;
+            console.SetFaseLabel("Warming Up");
             WarmingUpTimer.Start();
             while (serialCommunicator.IsConnected() && start) {
                 Update();
@@ -201,6 +205,9 @@ namespace Remote_Healtcare_Console
             if(console.user.maxHF != null)
                 if (bikeData.Pulse >= console.user.maxHF)
                     Stop();
+
+            console.SetTimerLabel(bikeData.Time);
+            console.SetRPMIndication(bikeData.Rpm);
         }
         
         public double calculateVO2MaX()

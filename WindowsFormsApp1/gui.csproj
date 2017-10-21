@@ -128,6 +128,18 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RPM_To_Low.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\red down.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\green up.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\keep_on_going.png" />
+  </ItemGroup>
   <Import Project="..\UserData\UserData.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

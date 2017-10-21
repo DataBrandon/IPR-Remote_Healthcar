@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using UserData;
 
 using System.Threading;
+using System.Drawing;
 
 namespace Remote_Healtcare_Console
 {
@@ -28,9 +29,7 @@ namespace Remote_Healtcare_Console
             combo.Items.Clear();
             combo.Items.AddRange(SerialPort.GetPortNames());
         }
-
         
-
         private void BStart_Click(object sender, EventArgs e)
         {
             combo.Focus();
@@ -41,30 +40,45 @@ namespace Remote_Healtcare_Console
             bike.Start();
         }
 
-        public void setTimerLabel(int seconds)
+        public void SetTimerLabel(TimeSpan time)
         {
-            Timerlabel.Text = seconds.ToString();
+            if (InvokeRequired)
+            {
+                this.BeginInvoke(new Action<TimeSpan>(SetTimerLabel), new object[] { time });
+                return;
+            }
+            Timerlabel.Text = time.ToString();
         }
 
-        public void setFaseLabel(string fase)
+        public void SetFaseLabel(string fase)
         {
+            if (InvokeRequired)
+            {
+                this.BeginInvoke(new Action<string>(SetFaseLabel), new object[] { fase });
+                return;
+            }
             FaseLabel.Text = fase;
+        }
+
+        public void SetRPMIndication(int rpm)
+        {
+            if (InvokeRequired)
+            {
+                this.BeginInvoke(new Action<int>(SetRPMIndication), new object[] { rpm });
+                return;
+            }
+            if (rpm > 60)
+                RPM_Indication_Picture.Image = Properties.Resources.red_down;
+            else if(rpm < 50)
+                RPM_Indication_Picture.Image = Properties.Resources.green_up;
+            else
+                RPM_Indication_Picture.Image = Properties.Resources.keep_on_going;
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             Environment.Exit(0);
             base.OnFormClosed(e);
-        }
-        
-        public void AddMessage(String value)
-        {
-            if (InvokeRequired)
-            {
-                this.BeginInvoke(new Action<string>(AddMessage), new object[] { value });
-                return;
-            }
-            
         }
 
         private void Closing(object sender, FormClosingEventArgs e)

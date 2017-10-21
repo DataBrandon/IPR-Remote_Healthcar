@@ -36,8 +36,8 @@
             this.Timerlabel = new System.Windows.Forms.Label();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.RPM_Indication_Picture = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.RPM_Indication_Picture)).BeginInit();
             this.SuspendLayout();
             // 
             // BStart
@@ -96,16 +96,16 @@
             this.Timerlabel.TabIndex = 29;
             this.Timerlabel.Text = "87";
             // 
-            // pictureBox1
+            // RPM_Indication_Picture
             // 
-            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(26, 60);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(376, 435);
-            this.pictureBox1.TabIndex = 30;
-            this.pictureBox1.TabStop = false;
+            this.RPM_Indication_Picture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.RPM_Indication_Picture.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.RPM_Indication_Picture.Image = ((System.Drawing.Image)(resources.GetObject("RPM_Indication_Picture.Image")));
+            this.RPM_Indication_Picture.Location = new System.Drawing.Point(26, 60);
+            this.RPM_Indication_Picture.Name = "RPM_Indication_Picture";
+            this.RPM_Indication_Picture.Size = new System.Drawing.Size(376, 435);
+            this.RPM_Indication_Picture.TabIndex = 30;
+            this.RPM_Indication_Picture.TabStop = false;
             // 
             // Console
             // 
@@ -113,7 +113,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Highlight;
             this.ClientSize = new System.Drawing.Size(1101, 603);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.RPM_Indication_Picture);
             this.Controls.Add(this.Timerlabel);
             this.Controls.Add(this.FaseLabel);
             this.Controls.Add(this.Status);
@@ -123,7 +123,7 @@
             this.Name = "Console";
             this.Text = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Closing);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RPM_Indication_Picture)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -138,7 +138,7 @@
         private System.Windows.Forms.Label Timerlabel;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.ComponentModel.BackgroundWorker backgroundWorker2;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox RPM_Indication_Picture;
     }
 }
 

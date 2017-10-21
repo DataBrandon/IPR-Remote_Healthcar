@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Doctor.Properties {
+namespace Remote_Healtcare_Console.Properties {
     using System;
     
     
@@ -57,6 +57,36 @@ namespace Doctor.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap green_up {
+            get {
+                object obj = ResourceManager.GetObject("green_up", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap keep_on_going {
+            get {
+                object obj = ResourceManager.GetObject("keep_on_going", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap red_down {
+            get {
+                object obj = ResourceManager.GetObject("red_down", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }
