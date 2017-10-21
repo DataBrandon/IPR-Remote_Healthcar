@@ -18,11 +18,10 @@ namespace Remote_Healtcare_Console
         public string path;
         public ISet<BikeData> data;
         private Client client;
+        public User user;
 
-
-        public Console(Client client)
+        public Console(Client client, User user)
         {
-
             InitializeComponent();
             this.client = client;
             combo = comPorts;
@@ -40,7 +39,6 @@ namespace Remote_Healtcare_Console
 
             bike = new Bike(combo.SelectedItem.ToString(), this, client);
             bike.Start();
-
         }
 
         public void setTimerLabel(int seconds)
@@ -58,10 +56,7 @@ namespace Remote_Healtcare_Console
             Environment.Exit(0);
             base.OnFormClosed(e);
         }
-
         
-
-
         public void AddMessage(String value)
         {
             if (InvokeRequired)
@@ -76,6 +71,5 @@ namespace Remote_Healtcare_Console
         {
             client.SendMessage("bye");
         }
-
     }
 }

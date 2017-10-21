@@ -57,9 +57,7 @@ namespace Server {
                         this.User = user;
                         dynamic response = new {
                             access = true,
-                            fullname = user.FullName,
-                            doctortype = user.Type,
-                            hashcode = hash
+                            user = user
                         };
                         writeMessage(response);
                         found = true;

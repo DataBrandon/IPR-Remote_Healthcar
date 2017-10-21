@@ -14,7 +14,7 @@ namespace UserData {
         public UserType Type { get; set; }
         private int age;
         private bool male;
-
+        public int maxHF;
         
         public User(string username, string password, string fullName, string hashcode, UserType type) {
             this.username = username;

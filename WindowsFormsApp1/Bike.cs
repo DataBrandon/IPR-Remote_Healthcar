@@ -6,6 +6,7 @@ using System.Threading;
 using UserData;
 using System.Timers;
 using Timer = System.Timers.Timer;
+using System.Collections.Generic;
 
 namespace Remote_Healtcare_Console
 {
@@ -13,18 +14,48 @@ namespace Remote_Healtcare_Console
         private bool start;
         private SerialCommunicator serialCommunicator;
         private Client client;
-        private Thread BikeThread;
-        private Thread TestThread;
         private string hashcode;
+        private List<int> RecordedHF;
+
+        private Timer WarmingUpTimer, MainTestTimer, CooldownTimer;
+        private bool WarmingUpState, MainTestState, CooldownState;
 
         public Bike(string port, Console console, Client client) : base(console) {
             this.client = client;
             start = false;
             serialCommunicator = new SerialCommunicator(port);
-            BikeThread = new Thread(InitBike);
-            TestThread = new Thread(starttest);
+
+            WarmingUpState = false;
+            MainTestState = false;
+            CooldownState = false;
+
+            WarmingUpTimer = new Timer(2 * 60000);
+            MainTestTimer = new Timer(6 * 60000);
+            CooldownTimer = new Timer(1 * 60000);
+
+            WarmingUpTimer.Elapsed += WarmingUpTimer_Elapsed;
+            MainTestTimer.Elapsed += MainTestTimer_Elapsed;
+            CooldownTimer.Elapsed += CooldownTimer_Elapsed;
         }
 
+        private void WarmingUpTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            WarmingUpState = false;
+            MainTestTimer.Start();
+            MainTestState = true;
+        }
+
+        private void MainTestTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            MainTestState = false;
+            CooldownTimer.Start();
+            CooldownState = true;
+        }
+
+        private void CooldownTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            CooldownState = false;
+        }
 
         private void starttest()
         {
@@ -32,33 +63,14 @@ namespace Remote_Healtcare_Console
          
             if(serialCommunicator.IsConnected() && start) {
 
-                WarmingUp(2);
                 //new Thread();
-                
-                MainTestStart(6);
-                CoolingDownStart(1);
-
-
-
-
                 //Thread.Sleep(500);
+                Reset();
+                Thread.Sleep(500);
+                SetManual();
+                Thread.Sleep(500);
+                Run();
             }
-        }
-
-        private void CoolingDownStart(int minutes)
-        {
-            Timer cooldowntimer = new Timer(minutes * 60000);
-            cooldowntimer.Start();
-            
-        }
-
-
-
-
-        private void MainTestStart(int minutes)
-        {
-            Timer testime = new Timer(minutes * 60000);
-            testime.Start();
         }
 
         private void SetChanges()
@@ -85,7 +97,6 @@ namespace Remote_Healtcare_Console
               //      BikeThread.Abort();
               //      break;
             //}
-
         }
 
         public override void Start() {
@@ -93,30 +104,16 @@ namespace Remote_Healtcare_Console
             serialCommunicator.OpenConnection();
         }
 
-        public void WarmingUp(int minutes)
-        {
-            Timer Warmingup = new Timer(minutes * 60000); 
-            Warmingup.Start();
-
-
-
-        }
-
         public override void Stop() {
             start = false;
+            SetResistance(25);
             serialCommunicator.CloseConnection();
         }
 
-        private void InitBike() {
-            Thread.Sleep(500);
-            Reset();
-            Thread.Sleep(500);
-            SetManual();
-            Thread.Sleep(500);
-            Run();
-        }
-
-        private void Run() {
+        private void Run()
+        {
+            WarmingUpState = true;
+            WarmingUpTimer.Start();
             while (serialCommunicator.IsConnected() && start) {
                 Update();
                 Thread.Sleep(500);
@@ -201,15 +198,37 @@ namespace Remote_Healtcare_Console
             });
 
             //SetDataToGUI();
+
+            if (WarmingUpState)
+            {
+                if (bikeData.Resistance > 25)
+                    SetResistance(25);
+            }
+            else if (MainTestState)
+            {
+                if (bikeData.Time.Seconds % 15 == 0 || bikeData.Time.Seconds == 0)
+                    RecordedHF.Add(bikeData.Pulse);
+                if (bikeData.Pulse <= 130 && bikeData.Time.Seconds % 10 == 0)
+                    SetResistance(bikeData.Resistance + 25);
+            }
+            else if (CooldownState)
+            {
+                if (bikeData.Resistance != 75)
+                    SetResistance(75);
+            }
+            else
+                Stop();
+
+            if(bikeData.Pulse >= console.user.maxHF)
+            {
+                Stop();
+            }
         }
-
-
-
-
-
-
+        
         public double calculateVO2MaX()
         {
+            //List<int> tempHF = RecordedHF.
+
             return 0.0;
         }
     }
