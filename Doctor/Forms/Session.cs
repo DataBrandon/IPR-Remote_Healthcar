@@ -27,82 +27,36 @@ namespace Doctor
         Thread UpdateThread;
         Thread GraphThread;
 
-        public Session(User patient, Client client, string hashcode)
+        public Session(List<BikeData> list)
         {
             InitializeComponent();
-            this.patient = patient;
-            this.client = client;
 
-            Stop_Session_Btn.Enabled = false;
+            int AvgPulse = 0;
+            int AvgRPM = 0;
+            double AvgSpeed = 0;
+            int AvgResistance = 0;
 
-            client.SendMessage(new
+            foreach (BikeData data in list)
             {
-                id = "setpatient",
-                data = new
-                {
-                    doctor = new
-                    {
-                        id = "setdoctor",
-                        doctor = hashcode
-                    },
-                    patient = patient
-                }
-            });
-
-            UpdateThread = new Thread(run);
-        }
-
-        private void run()
-        {
-            pulsehistory = new List<int>();
-            speedhistory = new List<double>();
-            roundhistory = new List<int>();
-            distancehistory = new List<int>();
-            resistancehistory = new List<int>();
-            energyhistory = new List<int>();
-            generatedhistory = new List<int>();
-            
-            while (true)
-            {
-                client.SendMessage(new
-                {
-                    id = "reqSession",
-                    data = new
-                    {
-                        hashcode = patient.Hashcode
-                    }
-                });
-
-                JObject obj = (JObject)JsonConvert.DeserializeObject(client.ReadMessage());
-                switch ((string)obj["id"])
-                {
-                    case "clientDisconnected":
-                        MessageBox.Show($"{patient.FullName} disconnected");
-                        this.Hide();
-                        break;
-                    case "bikeDisconnected":
-                        MessageBox.Show($"Fiets van {patient.FullName} disconnected");
-                        Start_Session_Btn.Enabled = false;
-                        Stop_Session_Btn.Enabled = false;
-                        break;
-                    case "bikeData":
-                        BikeData data = (BikeData)(obj["bikeData"]).ToObject(typeof(BikeData));
-                        SetPulse(data.Pulse.ToString());
-                        SetRoundMin(data.Rpm.ToString());
-                        SetSpeed(data.Speed.ToString());
-                        SetDistance(data.Distance.ToString());
-                        SetResistance(data.Resistance.ToString());
-                        SetEnergy(data.Energy.ToString());
-                        SetTime(data.Time.ToString());
-                        SetWatt(data.Power.ToString());
-                        Application.DoEvents();
-
-                        AddToGraphHistory(data);
-                        break;
-                }
+                grafiek.Series.FindByName("Hartslag").Points.AddY(data.Pulse);
+                AvgPulse += data.Pulse;
+                grafiek.Series.FindByName("RPM").Points.AddY(data.Rpm);
+                AvgRPM += data.Rpm;
+                grafiek.Series.FindByName("Snelheid").Points.AddY(data.Speed);
+                AvgSpeed += data.Speed;
+                grafiek.Series.FindByName("Afstand").Points.AddY(data.Distance);
+                grafiek.Series.FindByName("Weerstand").Points.AddY((data.Resistance - 25) * 100 / 375);
+                AvgResistance += (data.Resistance - 25) * 100 / 375;
             }
-        }
 
+            lblPulse.Text = (AvgPulse / list.Count).ToString();
+            lblRoundMin.Text = (AvgRPM / list.Count).ToString();
+            lblSpeed.Text = (AvgSpeed / list.Count).ToString();
+            lblDistance.Text = list[list.Count - 1].Distance.ToString();
+            lblResistence.Text = (AvgResistance / list.Count).ToString();
+            lblEnergy.Text = list[list.Count - 1].Energy.ToString();
+            lblTime.Text = list[list.Count - 1].Time.ToString();
+        }
 
         public void SetPulse(String s)
         {
@@ -156,25 +110,6 @@ namespace Doctor
             lblDistance.Refresh();
         }
 
-        public void SetResistance(String s)
-        {
-            if (InvokeRequired)
-            {
-                this.BeginInvoke(new Action<string>(SetResistance), new object[] { s });
-                return;
-            }
-            lblResistence.Text = s;
-            lblResistence.Invalidate();
-            lblResistence.Update();
-            lblResistence.Refresh();
-
-            if (!s.Equals("0"))
-            {
-                Resistance_Track_Bar.Value = (int.Parse(s) - 25) * 100 / 375;
-                Scrolling(null, null);
-            }
-        }
-
         public void SetEnergy(String s)
         {
             if (InvokeRequired)
@@ -200,105 +135,7 @@ namespace Doctor
             lblTime.Update();
             lblTime.Refresh();
         }
-
-        public void SetWatt(String s)
-        {
-            if (InvokeRequired)
-            {
-                this.BeginInvoke(new Action<string>(SetWatt), new object[] { s });
-                return;
-            }
-            lblWatt.Text = s;
-            lblWatt.Invalidate();
-            lblWatt.Update();
-            lblWatt.Refresh();
-        }
-
-        private void Closing(object sender, FormClosingEventArgs e)
-        {
-            Stop_Session_Btn_Click(null, null);
-            client.SendMessage("bye");
-        }
-
-        private void Scrolling(object sender, EventArgs e)
-        {
-            Temp_Resistance_Lbl.Text = Resistance_Track_Bar.Value + " %";
-            Temp_Resistance_Lbl.Invalidate();
-            Temp_Resistance_Lbl.Update();
-            Temp_Resistance_Lbl.Refresh();
-        }
-
-        private void Stopped_Scrolling(object sender, MouseEventArgs e)
-        {
-            lblResistence.Text = Resistance_Track_Bar.Value.ToString();
-
-            int resistance = Resistance_Track_Bar.Value * 375 / 100 + 25;
-
-            client.SendMessage(new
-            {
-                id = "committingChanges",
-                data = new
-                {
-                    hashcode = patient.Hashcode,
-                    data = new
-                    {
-                        id = "setResistance",
-                        data = new
-                        {
-                            resistance = resistance
-                        }
-                    }
-                }
-            });
-        }
-
-        private void Send_Message_Btn_Click(object sender, EventArgs e)
-        {
-            client.SendMessage(new
-            {
-                id = "committingChanges",
-                data = new
-                {
-                    id = "chat",
-                    data = new
-                    {
-                        message = Message_Txt_Box.Text
-                    }
-                }
-            });
-        }
-
-        private void Start_Session_Btn_Click(object sender, EventArgs e)
-        {
-            Start_Session_Btn.Enabled = false;
-            Stop_Session_Btn.Enabled = true;
-
-            client.SendMessage(new
-            {
-                id = "startrecording",
-                data = new
-                {
-                    hashcode = patient.Hashcode
-                }
-            });
-            
-            UpdateThread.Start();
-        }
-
-        private void Stop_Session_Btn_Click(object sender, EventArgs e)
-        {
-            Start_Session_Btn.Enabled = true;
-            Stop_Session_Btn.Enabled = false;
-
-            client.SendMessage(new
-            {
-                id = "stoprecording"
-            });
-
-            UpdateThread.Abort();
-        }
-
-
+        
         private void AddToGraphHistory(BikeData bike)
         {
             lock (sessionLock)
@@ -378,32 +215,8 @@ namespace Doctor
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void label10_Click(object sender, EventArgs e)
         {
-            client.SendMessage(new
-            {
-                id = "committingChanges",
-                data = new
-                {
-                    hashcode = patient.Hashcode,
-                    data = new
-                    {
-                        id = "setResistance",
-                        data = new
-                        {
-                            resistance = 25
-                        }
-                    }
-                }
-            });
-
-            client.SendMessage(new
-            {
-                id = "stoprecording"
-            });
-
-            UpdateThread.Abort();
-
 
         }
     }   

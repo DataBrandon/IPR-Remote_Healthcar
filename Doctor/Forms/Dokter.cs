@@ -57,19 +57,6 @@ namespace Doctor
             }
         }
 
-        private void Connect_Btn_Click(object sender, EventArgs e)
-        {
-            if(Awaiting_Patients_Box.SelectedItem != null)
-            {
-                Form session = new Session((User)Awaiting_Patients_Box.SelectedItem, client, hashcode);
-                session.Show();
-            }
-            else
-            {
-                MessageBox.Show("Selecteer een patiënt");
-            }
-        }
-
         private void Log_Out_Btn_Click(object sender, EventArgs e)
         {
             dynamic message = new {
@@ -85,11 +72,6 @@ namespace Doctor
         {
             client.SendMessage("bye");
             this.Hide();
-        }
-
-        private void Send_Message_Btn_Click(object sender, EventArgs e)
-        {
-            
         }
 
         private void button1_Click(object sender, EventArgs e) {
@@ -110,31 +92,47 @@ namespace Doctor
 
         private void Patient_Selected(object sender, EventArgs e)
         {
-            //Old_Sessions_Box.Items.Clear();
+            Old_Sessions_Box.Items.Clear();
 
-            //client.SendMessage(new
-            //{
-            //    id = "oldsessions"
-            //});
+            client.SendMessage(new
+            {
+                id = "oldsessionlist",
+                user = (User)Awaiting_Patients_Box.SelectedItem
+            });
 
-            //string data = client.ReadMessage();
-            //string[] files = (string[])((JObject)JsonConvert.DeserializeObject(data))["data"].ToObject(typeof(string[]));
-            //foreach (string file in files)
-            //{
-            //    Old_Sessions_Box.Items.Add(Path.GetFileName(file));
-            //}
+            JObject data = (JObject)JsonConvert.DeserializeObject(client.ReadMessage());
+            if ((string)data["status"] == "alloldfiles")
+            {
+                string[] files = (string[])data["data"].ToObject(typeof(string[]));
+                foreach (string file in files)
+                {
+                    Old_Sessions_Box.Items.Add(Path.GetFileName(file));
+                }
+            }
         }
 
-        private void textBox2_TextChanged(object sender, EventArgs e)
+        private void Old_Session_Double_Click(object sender, EventArgs e)
         {
+            client.SendMessage(new
+            {
+                id = "oldsession",
+                data = new
+                {
+                    hashcode = hashcode,
+                    file = (string)Old_Sessions_Box.SelectedItem
+                }
+            });
 
+            JObject jObject = (JObject)JsonConvert.DeserializeObject(client.ReadMessage());
+            if ((string)jObject["status"] == "oldsession")
+            {
+                Console.WriteLine(jObject["data"]);
+                List<BikeData> data = (List<BikeData>)jObject["data"].ToObject(typeof(List<BikeData>));
+                Form session = new Session(data);
+                session.Show();
+            }
+            else
+                MessageBox.Show("Error loading session");
         }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-           
-        }
-
-        
     }
 }
