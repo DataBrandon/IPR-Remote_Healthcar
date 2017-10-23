@@ -16,6 +16,7 @@ namespace Remote_Healtcare_Console
         private Client client;
         private string hashcode;
         private List<int> RecordedHF;
+        private List<BikeData> bikeDataList;
 
         private Timer WarmingUpTimer, MainTestTimer, CooldownTimer;
         private bool WarmingUpState, MainTestState, CooldownState;
@@ -24,13 +25,15 @@ namespace Remote_Healtcare_Console
             this.client = client;
             start = false;
             serialCommunicator = new SerialCommunicator(port);
+            RecordedHF = new List<int>();
+            bikeDataList = new List<BikeData>();
 
             WarmingUpState = false;
             MainTestState = false;
             CooldownState = false;
 
             WarmingUpTimer = new Timer(2 * 60000);
-            MainTestTimer = new Timer(6 * 60000);
+            MainTestTimer = new Timer(4 * 60000);
             CooldownTimer = new Timer(1 * 60000);
 
             WarmingUpTimer.Elapsed += WarmingUpTimer_Elapsed;
@@ -58,6 +61,7 @@ namespace Remote_Healtcare_Console
         {
             CooldownState = false;
             console.SetFaseLabel("Done!");
+            Stop();
         }
 
         private void Starttest()
@@ -77,12 +81,23 @@ namespace Remote_Healtcare_Console
         public override void Start() {
             start = true;
             serialCommunicator.OpenConnection();
+            Starttest();
         }
 
         public override void Stop() {
             start = false;
             SetResistance(25);
             serialCommunicator.CloseConnection();
+            
+            client.SendMessage(new
+            {
+                id = "sendData",
+                data = new
+                {
+                    hashcode = hashcode,
+                    bikeData = bikeDataList
+                }
+            });
         }
 
         private void Run()
@@ -163,17 +178,8 @@ namespace Remote_Healtcare_Console
             else if (RecordedData.Last().Time != bikeData.Time) {
                 RecordedData.Add(bikeData);
             }
-            
-            client.SendMessage(new
-            {
-                id = "sendData",
-                data = new
-                {
-                    bikeData = bikeData
-                }
-            });
 
-            //SetDataToGUI();
+            bikeDataList.Add(bikeData);
 
             if (WarmingUpState)
             {
@@ -186,13 +192,14 @@ namespace Remote_Healtcare_Console
                 {
                     if (RecordedHF.Count > 0)
                         if (RecordedHF.Last() - bikeData.Pulse > 5 || RecordedHF.Last() - bikeData.Pulse < -5)
-                            if (bikeData.Resistance - 25 > 130)
-                                SetResistance(bikeData.Resistance - 25);
+                            if (bikeData.Resistance - 15 > 130)
+                                SetResistance(bikeData.Resistance - 15);
 
                     RecordedHF.Add(bikeData.Pulse);
                 }
-                if (bikeData.Pulse <= 130 && bikeData.Time.Seconds % 10 == 0)
-                    SetResistance(bikeData.Resistance + 25);
+                if (bikeData.Pulse <= 130 && bikeData.Time.Seconds % 20 == 0)
+                    SetResistance(bikeData.Resistance + 15);
+                console.SetRPMIndication(bikeData.Rpm);
             }
             else if (CooldownState)
             {
@@ -207,7 +214,6 @@ namespace Remote_Healtcare_Console
                     Stop();
 
             console.SetTimerLabel(bikeData.Time);
-            console.SetRPMIndication(bikeData.Rpm);
         }
         
         public double calculateVO2MaX()

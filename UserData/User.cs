@@ -25,7 +25,7 @@ namespace UserData {
         }
 
         [Newtonsoft.Json.JsonConstructor]
-        public User(string username, string password, string fullName, string hashcode, UserType type, int age,bool male, int maxHF)
+        public User(string username, string password, string fullName, string hashcode, UserType type, int age,bool male, int? maxHF)
         {
             this.username = username;
             this.password = password;

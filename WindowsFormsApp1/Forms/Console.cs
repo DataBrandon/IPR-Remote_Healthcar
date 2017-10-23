@@ -25,6 +25,7 @@ namespace Remote_Healtcare_Console
         {
             InitializeComponent();
             this.client = client;
+            this.user = user;
             combo = comPorts;
             combo.Items.Clear();
             combo.Items.AddRange(SerialPort.GetPortNames());
@@ -33,8 +34,6 @@ namespace Remote_Healtcare_Console
         private void BStart_Click(object sender, EventArgs e)
         {
             combo.Focus();
-
-            //new Thread(() => test()).Start();
 
             bike = new Bike(combo.SelectedItem.ToString(), this, client);
             bike.Start();
@@ -48,6 +47,9 @@ namespace Remote_Healtcare_Console
                 return;
             }
             Timerlabel.Text = time.ToString();
+            Timerlabel.Invalidate();
+            Timerlabel.Update();
+            Timerlabel.Refresh();
         }
 
         public void SetFaseLabel(string fase)
@@ -58,6 +60,9 @@ namespace Remote_Healtcare_Console
                 return;
             }
             FaseLabel.Text = fase;
+            FaseLabel.Invalidate();
+            FaseLabel.Update();
+            FaseLabel.Refresh();
         }
 
         public void SetRPMIndication(int rpm)
@@ -73,6 +78,10 @@ namespace Remote_Healtcare_Console
                 RPM_Indication_Picture.Image = Properties.Resources.green_up;
             else
                 RPM_Indication_Picture.Image = Properties.Resources.keep_on_going;
+            RPM_Indication_Picture.Invalidate();
+            RPM_Indication_Picture.Update();
+            RPM_Indication_Picture.Refresh();
+            Application.DoEvents();
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)

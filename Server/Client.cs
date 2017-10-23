@@ -144,7 +144,7 @@ namespace Server {
                     new Thread(() => sendBroadcastMessage((JObject)obj["data"])).Start();
                     break;
                 case "sendData":
-                    session.AddBikeData((BikeData)obj["data"]["bikeData"].ToObject(typeof(BikeData)));
+                    new Thread(() => SaveSession((JObject)obj["data"])).Start();
                     break;
                 case "add":
                     new Thread(() => addUser((JObject)obj["data"])).Start();
@@ -167,6 +167,32 @@ namespace Server {
                 case "disconnect":
                     closeStream();
                     break;
+            }
+        }
+
+        private void SaveSession(JObject jObject)
+        {
+            string hashcode = (string)jObject["hashcode"];
+            List<BikeData> data = (List<BikeData>)jObject["bikeData"].ToObject(typeof(List<BikeData>));
+            
+            string pathToUserDir = Directory.GetCurrentDirectory() + @"\ClientData\" + hashcode + @"\";
+            string pathToSessionFile = Path.Combine(pathToUserDir, DateTime.UtcNow.ToString().Replace(":", "-") + ".json");
+            if (!Directory.Exists(pathToUserDir))
+            {
+                Directory.CreateDirectory(pathToUserDir);
+            }
+            else
+            {
+                File.Create(pathToSessionFile);
+            }
+
+            try
+            {
+                File.WriteAllText(pathToSessionFile, JsonConvert.SerializeObject(data, Formatting.Indented));
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine(e.StackTrace);
             }
         }
 
@@ -343,7 +369,7 @@ namespace Server {
         }
 
         public void StartRecording(JObject data) {
-            if (User.Type == UserType.Doctor) {
+            if (User.Type == UserType.Client) {
                 foreach (Client client in connectedClients) {
                     if(client.User.Hashcode == (string)data["hashcode"]) {
                         lock (sessionLock) {
