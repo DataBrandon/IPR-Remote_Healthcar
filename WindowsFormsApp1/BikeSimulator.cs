@@ -21,15 +21,16 @@ namespace Remote_Healtcare_Console
         private List<int> RecordedResistance;
         private System.Timers.Timer timer;
         private TimeSpan minusTimeSpan;
+        private double VO2;
 
-        private bool WarmingUpState, MainTestState, Steady;
+        private bool WarmingUpState, MainTestState, Steady, Secure;
 
         public BikeSimulator(Console console) : base(console) {
             this.console = console;
             data = console.data;
             count = 0;
             BikeThread = new Thread(Update);
-            timer = new System.Timers.Timer(100);
+            timer = new System.Timers.Timer(1000);
             timer.Elapsed += Timer_Elapsed;
             WarmingUpState = false;
             MainTestState = false;
@@ -74,6 +75,7 @@ namespace Remote_Healtcare_Console
                         {
                             MainTestState = false;
                             console.SetFaseLabel("Cooling down");
+                            CalculateVO2MaX(console.user, (int)RecordedHF.Average(), (int)RecordedResistance.Max());
                         }
 
                         TimeSpan tempTime = data.ElementAt(count).Time - minusTimeSpan;
@@ -129,7 +131,6 @@ namespace Remote_Healtcare_Console
             }
             else
             {
-                console.SetVO2max(calculateVO2MaX(console.user, (int)RecordedHF.Average(), (int)RecordedResistance.Average()));
                 Stop();
             }
         }
@@ -153,26 +154,64 @@ namespace Remote_Healtcare_Console
             throw new NotImplementedException();
         }
 
-        public double VO2max(int age, int sex, int shr)
+        public void CalculateVO2MaX(User user, int shr, int watt)
         {
-            return (220 - age - 73 - (sex * 10)) / (shr - 73 - (sex * 10));
-        }
-
-        public double VO2I(int watt, int weight)
-        {
-            return (1.8 * (((watt * 6.1183) / 2) / weight) + 7);
-        }
-
-        public double calculateVO2MaX(User user, int shr, int watt)
-        {
-            int sex;
-            if (user.male)
-                sex = 0;
+            double vo2max = 0;
+            if (user.male == null || user.birthyear == null || user.weight == null)
+                return;
+            if ((bool)user.male)
+                vo2max = (0.00212 * watt + 0.299) / (0.769 * shr - 48.5) * 100;
             else
-                sex = 1;
-            double vmax = VO2max(user.birthyear, sex, shr);
-            double vmai = VO2I(watt, user.weight);
-            return vmax * vmai;
+                vo2max = (0.00193 * watt + 0.326) / (0.769 * shr - 56.1) * 100;
+
+            int age = DateTime.Now.Year - (int)user.birthyear;
+            double factor;
+            if (age < 40 && age >= 35)
+                factor = 0.87;
+            else if (age < 45)
+                factor = 0.83;
+            else if (age < 50)
+                factor = 0.78;
+            else if (age < 55)
+                factor = 0.75;
+            else if (age < 60)
+                factor = 0.71;
+            else if (age < 65)
+                factor = 0.68;
+            else
+                factor = 0.65;
+
+            double result = vo2max * 1000 / (int)user.weight * factor;
+            VO2 = result;
+            console.SetVO2max(result);
+            SecureVO2max();
+        }
+
+        public void SecureVO2max()
+        {
+            for (int i = 0; i < RecordedHF.Count; i++)
+            {
+                if (i > 0)
+                {
+                    if (RecordedHF[i - 1] - RecordedHF[i] > 5 || RecordedHF[i - 1] - RecordedHF[i] < -5)
+                    {
+                        Secure = false;
+                    }
+                }
+            }
+
+            for (int i = 0; i < RecordedResistance.Count; i++)
+            {
+                if (i > 0)
+                {
+                    if (RecordedResistance[i - 1] - RecordedResistance[i] > 5 || RecordedResistance[i - 1] - RecordedResistance[i] < -5)
+                    {
+                        Secure = false;
+                    }
+                }
+            }
+
+            console.SetSecure(Secure);
         }
     }
 }

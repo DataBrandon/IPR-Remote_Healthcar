@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.lblTime = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.grafiek = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -43,6 +43,7 @@
             this.Secure_Lbl = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.VO2max_Lbl = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.grafiek)).BeginInit();
             this.SuspendLayout();
             // 
@@ -67,31 +68,31 @@
             // 
             // grafiek
             // 
-            chartArea1.Name = "ChartArea1";
-            this.grafiek.ChartAreas.Add(chartArea1);
-            legend1.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
-            legend1.IsDockedInsideChartArea = false;
-            legend1.Name = "Legend1";
-            this.grafiek.Legends.Add(legend1);
+            chartArea3.Name = "ChartArea1";
+            this.grafiek.ChartAreas.Add(chartArea3);
+            legend3.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+            legend3.IsDockedInsideChartArea = false;
+            legend3.Name = "Legend1";
+            this.grafiek.Legends.Add(legend3);
             this.grafiek.Location = new System.Drawing.Point(8, 47);
             this.grafiek.Name = "grafiek";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series1.Color = System.Drawing.Color.Red;
-            series1.Legend = "Legend1";
-            series1.Name = "Pulse";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series2.Legend = "Legend1";
-            series2.Name = "RPM";
-            series2.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StepLine;
-            series3.Legend = "Legend1";
-            series3.Name = "Resistance";
-            this.grafiek.Series.Add(series1);
-            this.grafiek.Series.Add(series2);
-            this.grafiek.Series.Add(series3);
+            series7.ChartArea = "ChartArea1";
+            series7.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series7.Color = System.Drawing.Color.Red;
+            series7.Legend = "Legend1";
+            series7.Name = "Pulse";
+            series8.ChartArea = "ChartArea1";
+            series8.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series8.Legend = "Legend1";
+            series8.Name = "RPM";
+            series8.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series9.ChartArea = "ChartArea1";
+            series9.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StepLine;
+            series9.Legend = "Legend1";
+            series9.Name = "Resistance";
+            this.grafiek.Series.Add(series7);
+            this.grafiek.Series.Add(series8);
+            this.grafiek.Series.Add(series9);
             this.grafiek.Size = new System.Drawing.Size(772, 372);
             this.grafiek.TabIndex = 59;
             this.grafiek.Text = "chart1";
@@ -141,7 +142,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.Secure_Lbl.AutoSize = true;
             this.Secure_Lbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Secure_Lbl.Location = new System.Drawing.Point(537, 447);
+            this.Secure_Lbl.Location = new System.Drawing.Point(599, 447);
             this.Secure_Lbl.Name = "Secure_Lbl";
             this.Secure_Lbl.Size = new System.Drawing.Size(118, 31);
             this.Secure_Lbl.TabIndex = 69;
@@ -168,11 +169,22 @@
             this.VO2max_Lbl.TabIndex = 67;
             this.VO2max_Lbl.Text = "2.5";
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(194, 498);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(110, 25);
+            this.label6.TabIndex = 70;
+            this.label6.Text = "(ml/kg/min)";
+            // 
             // Session
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(802, 507);
+            this.ClientSize = new System.Drawing.Size(802, 539);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.Secure_Lbl);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.VO2max_Lbl);
@@ -202,5 +214,6 @@
         private System.Windows.Forms.Label Secure_Lbl;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label VO2max_Lbl;
+        private System.Windows.Forms.Label label6;
     }
 }

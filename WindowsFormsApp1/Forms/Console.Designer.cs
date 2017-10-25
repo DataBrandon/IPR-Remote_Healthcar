@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Console));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.BStart = new System.Windows.Forms.Button();
             this.comPorts = new System.Windows.Forms.ComboBox();
             this.Status = new System.Windows.Forms.Label();
@@ -56,6 +56,7 @@
             this.Secure_Lbl = new System.Windows.Forms.Label();
             this.Chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.NewResistence_Lbl = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.RPM_Indication_Picture)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Chart)).BeginInit();
             this.SuspendLayout();
@@ -244,7 +245,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.Secure_Lbl.AutoSize = true;
             this.Secure_Lbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Secure_Lbl.Location = new System.Drawing.Point(797, 512);
+            this.Secure_Lbl.Location = new System.Drawing.Point(880, 512);
             this.Secure_Lbl.Name = "Secure_Lbl";
             this.Secure_Lbl.Size = new System.Drawing.Size(118, 31);
             this.Secure_Lbl.TabIndex = 42;
@@ -253,27 +254,27 @@
             // 
             // Chart
             // 
-            chartArea2.Name = "ChartArea1";
-            this.Chart.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.Chart.Legends.Add(legend2);
-            this.Chart.Location = new System.Drawing.Point(16, 560);
+            chartArea1.Name = "ChartArea1";
+            this.Chart.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.Chart.Legends.Add(legend1);
+            this.Chart.Location = new System.Drawing.Point(12, 580);
             this.Chart.Name = "Chart";
-            series4.ChartArea = "ChartArea1";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series4.Legend = "Legend1";
-            series4.Name = "RPM";
-            series5.ChartArea = "ChartArea1";
-            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series5.Legend = "Legend1";
-            series5.Name = "Pulse";
-            series6.ChartArea = "ChartArea1";
-            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series6.Legend = "Legend1";
-            series6.Name = "Resistance";
-            this.Chart.Series.Add(series4);
-            this.Chart.Series.Add(series5);
-            this.Chart.Series.Add(series6);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Legend = "Legend1";
+            series1.Name = "RPM";
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Legend = "Legend1";
+            series2.Name = "Pulse";
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series3.Legend = "Legend1";
+            series3.Name = "Resistance";
+            this.Chart.Series.Add(series1);
+            this.Chart.Series.Add(series2);
+            this.Chart.Series.Add(series3);
             this.Chart.Size = new System.Drawing.Size(1048, 245);
             this.Chart.TabIndex = 43;
             this.Chart.Text = "chart1";
@@ -289,12 +290,23 @@
             this.NewResistence_Lbl.TabIndex = 44;
             this.NewResistence_Lbl.Text = ">>> 275";
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(491, 560);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(110, 25);
+            this.label6.TabIndex = 45;
+            this.label6.Text = "(ml/kg/min)";
+            // 
             // Console
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(1101, 817);
+            this.ClientSize = new System.Drawing.Size(1058, 837);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.NewResistence_Lbl);
             this.Controls.Add(this.Chart);
             this.Controls.Add(this.Secure_Lbl);
@@ -350,6 +362,7 @@
         private System.Windows.Forms.Label Secure_Lbl;
         private System.Windows.Forms.DataVisualization.Charting.Chart Chart;
         private System.Windows.Forms.Label NewResistence_Lbl;
+        private System.Windows.Forms.Label label6;
     }
 }
 

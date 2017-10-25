@@ -12,10 +12,10 @@ namespace UserData {
         private string hashcode;
         public string FullName { get; set; }
         public UserType Type { get; set; }
-        public int birthyear;
-        public bool male;
+        public int? birthyear;
+        public bool? male;
         public int? maxHF;
-        public int weight;
+        public int? weight;
 
         public User(string username, string password, string fullName, string hashcode, UserType type)
         {
@@ -42,7 +42,7 @@ namespace UserData {
             makeHashcodeValid(Encoding.Default.GetString(new SHA256Managed().ComputeHash(Encoding.Default.GetBytes(DateTime.UtcNow.Ticks.ToString() + username))));
         }
         
-        public User(string username, string password, string fullName, UserType type, int age, bool male, int weight, int? maxHF)
+        public User(string username, string password, string fullName, UserType type, int? age, bool? male, int? weight, int? maxHF)
         {
             this.username = username;
             this.password = password;
@@ -57,7 +57,7 @@ namespace UserData {
         }
 
         [Newtonsoft.Json.JsonConstructor]
-        public User(string username, string password, string hashcode, string fullName, UserType type, int age, bool male, int weight, int? maxHF)
+        public User(string username, string password, string hashcode, string fullName, UserType type, int? age, bool? male, int? weight, int? maxHF)
         {
             this.username = username;
             this.password = password;
@@ -70,7 +70,7 @@ namespace UserData {
             this.weight = weight;
         }
 
-        public User(string username, string password, string fullName, UserType type, int age, bool male, int weight){
+        public User(string username, string password, string fullName, UserType type, int? age, bool? male, int? weight){
             this.username = username;
             this.password = password;
             this.FullName = fullName;

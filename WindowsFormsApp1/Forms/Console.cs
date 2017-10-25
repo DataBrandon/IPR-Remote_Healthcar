@@ -32,7 +32,7 @@ namespace Remote_Healtcare_Console
             combo.Items.Clear();
             combo.Items.Add("Simulator");
             combo.Items.AddRange(SerialPort.GetPortNames());
-            RPM_Indication_Picture.SizeMode = PictureBoxSizeMode.AutoSize;
+            RPM_Indication_Picture.SizeMode = PictureBoxSizeMode.StretchImage;
         }
         
         private void BStart_Click(object sender, EventArgs e)
@@ -134,7 +134,7 @@ namespace Remote_Healtcare_Console
         {
             Chart.Series.FindByName("RPM").Points.AddY(RPM);
             Chart.Series.FindByName("Pulse").Points.AddY(Pulse);
-            Chart.Series.FindByName("Resistance").Points.AddY((Resistance - 25) * 100 / 375);
+            Chart.Series.FindByName("Resistance").Points.AddY(Resistance);
         }
 
         internal void SetResistance(string v)
@@ -153,7 +153,10 @@ namespace Remote_Healtcare_Console
                     NewResistence_Lbl.ForeColor = Color.White;
             }
             else if (NewResistence_Lbl.Text != "")
+            {
                 NewResistence_Lbl.Text = "";
+                NewResistence_Lbl.ForeColor = Color.White;
+            }
             Resistance_Lbl.Text = v;
             Resistance_Lbl.Invalidate();
             Resistance_Lbl.Update();
@@ -254,7 +257,7 @@ namespace Remote_Healtcare_Console
                 this.BeginInvoke(new Action<double>(SetVO2max), new object[] { v });
                 return;
             }
-            VO2max_Lbl.Text = v.ToString();
+            VO2max_Lbl.Text = v.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
             VO2max_Lbl.Invalidate();
             VO2max_Lbl.Update();
             VO2max_Lbl.Refresh();

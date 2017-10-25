@@ -64,11 +64,6 @@ namespace Remote_Healtcare_Console
             SetResistance(25);
             serialCommunicator.CloseConnection();
 
-            BikeData tempData = new BikeData();
-            tempData.VO2max = VO2;
-            tempData.Secure = Secure;
-            bikeDataList.Add(tempData);
-
             client.SendMessage(new
             {
                 id = "sendData",
@@ -148,7 +143,7 @@ namespace Remote_Healtcare_Console
                 dataSplitted[2],
                 int.Parse(dataSplitted[3]), int.Parse(dataSplitted[4]), int.Parse(dataSplitted[5]),
                 dataSplitted[6],
-                int.Parse(dataSplitted[7]), null, null);
+                int.Parse(dataSplitted[7]));
 
             if(bikeData.Time.Minutes >= 2 && WarmingUpState)
             {
@@ -164,7 +159,7 @@ namespace Remote_Healtcare_Console
                 console.SetFaseLabel("Cooling down");
                 minusTimeSpan += new TimeSpan(0, 4, 0);
                 SetResistance(bikeData.Resistance / 2);
-                CalculateVO2MaX(console.user, (int)RecordedHF.Average(), (int)RecordedResistance.Average());
+                CalculateVO2MaX(console.user, (int)RecordedHF.Average(), (int)RecordedResistance.Max());
             }
             else if(CooldownState && bikeData.Time.Minutes < 7)
             {
@@ -246,33 +241,19 @@ namespace Remote_Healtcare_Console
             console.SetSteady(Steady);
         }
 
-        public double VO2max(int age, int sex, int shr)
-        {
-            return (220 - age - 73 - (sex * 10)) / (shr - 73 - (sex * 10));
-        }
-
-        public double VO2I(int watt, int weight)
-        {
-            return (1.8 * (((watt * 6.1183) / 2) / weight) + 7);
-        }
-
         public void CalculateVO2MaX(User user, int shr, int watt)
         {
-            int sex;
-            if (user.male)
-                sex = 0;
+            double vo2max = 0;
+            if (user.male == null || user.birthyear == null || user.weight == null)
+                return;
+            if ((bool)user.male)
+                vo2max = (0.00212 * watt + 0.299) / (0.769 * shr - 48.5) * 100;
             else
-                sex = 1;
-            double vmax = VO2max(user.birthyear, sex, shr);
-            double vmai = VO2I(watt, user.weight);
+                vo2max = (0.00193 * watt + 0.326) / (0.769 * shr - 56.1) * 100;
 
-            int age = DateTime.Now.Year - user.birthyear;
+            int age = DateTime.Now.Year - (int)user.birthyear;
             double factor;
-            if (age < 25)
-                factor = 1.1;
-            else if (age < 35)
-                factor = 1.0;
-            else if (age < 40)
+            if (age < 40 && age >= 35)
                 factor = 0.87;
             else if (age < 45)
                 factor = 0.83;
@@ -287,7 +268,7 @@ namespace Remote_Healtcare_Console
             else
                 factor = 0.65;
 
-            double result = vmax * vmai * factor;
+            double result = vo2max * 1000 / (int)user.weight * factor;
             VO2 = result;
             console.SetVO2max(result);
             SecureVO2max();
