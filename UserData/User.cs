@@ -12,7 +12,7 @@ namespace UserData {
         private string hashcode;
         public string FullName { get; set; }
         public UserType Type { get; set; }
-        public int age;
+        public int birthyear;
         public bool male;
         public int? maxHF;
         public int weight;
@@ -50,7 +50,7 @@ namespace UserData {
             this.Type = type;
             string test = Encoding.Default.GetString(new SHA256Managed().ComputeHash(Encoding.Default.GetBytes(DateTime.UtcNow.Ticks.ToString() + username)));
             makeHashcodeValid(test);
-            this.age = age;
+            this.birthyear = age;
             this.male = male;
             this.maxHF = maxHF;
             this.weight = weight;
@@ -64,7 +64,7 @@ namespace UserData {
             this.FullName = fullName;
             this.Type = type;
             this.hashcode = hashcode;
-            this.age = age;
+            this.birthyear = age;
             this.male = male;
             this.maxHF = maxHF;
             this.weight = weight;
@@ -77,7 +77,7 @@ namespace UserData {
             this.Type = type;
             string test = Encoding.Default.GetString(new SHA256Managed().ComputeHash(Encoding.Default.GetBytes(DateTime.UtcNow.Ticks.ToString() + username)));
             makeHashcodeValid(test);
-            this.age = age;
+            this.birthyear = age;
             this.male = male;
             this.weight = weight;
         }

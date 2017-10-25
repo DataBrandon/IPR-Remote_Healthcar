@@ -170,7 +170,7 @@ namespace Remote_Healtcare_Console
                 sex = 0;
             else
                 sex = 1;
-            double vmax = VO2max(user.age, sex, shr);
+            double vmax = VO2max(user.birthyear, sex, shr);
             double vmai = VO2I(watt, user.weight);
             return vmax * vmai;
         }

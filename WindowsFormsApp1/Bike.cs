@@ -19,8 +19,9 @@ namespace Remote_Healtcare_Console
         private List<int> RecordedResistance;
         private List<BikeData> bikeDataList;
         private TimeSpan minusTimeSpan;
+        private double VO2;
 
-        private bool WarmingUpState, MainTestState, CooldownState, CorrectResult, Steady;
+        private bool WarmingUpState, MainTestState, CooldownState, CorrectResult, Steady, Secure;
 
         public Bike(string port, Console console, Client client) : base(console) {
             this.client = client;
@@ -36,6 +37,7 @@ namespace Remote_Healtcare_Console
             CooldownState = false;
             CorrectResult = false;
             Steady = false;
+            Secure = true;
             minusTimeSpan = new TimeSpan(0, 0, 0);
         }
 
@@ -62,37 +64,9 @@ namespace Remote_Healtcare_Console
             SetResistance(25);
             serialCommunicator.CloseConnection();
 
-            double VO2max = calculateVO2MaX(console.user, (int)RecordedHF.Average(), (int)RecordedResistance.Average());
-            console.SetVO2max(VO2max);
-
-            bool secure = true;
-
-            for (int i = 0; i < RecordedHF.Count; i++)
-            {
-                if(i > 0)
-                {
-                    if(RecordedHF[i-1] - RecordedHF[i] > 5 || RecordedHF[i - 1] - RecordedHF[i] < -5)
-                    {
-                        secure = false;
-                    }
-                }
-            }
-
-            for (int i = 0; i < RecordedResistance.Count; i++)
-            {
-                if (i > 0)
-                {
-                    if (RecordedResistance[i - 1] - RecordedResistance[i] > 5 || RecordedResistance[i - 1] - RecordedResistance[i] < -5)
-                    {
-                        secure = false;
-                    }
-                }
-            }
-
-            console.SetSecure(secure);
             BikeData tempData = new BikeData();
-            tempData.VO2max = VO2max;
-            tempData.Secure = secure;
+            tempData.VO2max = VO2;
+            tempData.Secure = Secure;
             bikeDataList.Add(tempData);
 
             client.SendMessage(new
@@ -139,6 +113,7 @@ namespace Remote_Healtcare_Console
                 trueResistance = resistance;
             }
             serialCommunicator.SendMessage("PW " + trueResistance);
+            console.SetNewResistance(resistance);
         }
 
         public override void SetTime(int mm, int ss) {
@@ -188,6 +163,8 @@ namespace Remote_Healtcare_Console
                 CooldownState = true;
                 console.SetFaseLabel("Cooling down");
                 minusTimeSpan += new TimeSpan(0, 4, 0);
+                SetResistance(bikeData.Resistance / 2);
+                CalculateVO2MaX(console.user, (int)RecordedHF.Average(), (int)RecordedResistance.Average());
             }
             else if(CooldownState && bikeData.Time.Minutes < 7)
             {
@@ -245,12 +222,7 @@ namespace Remote_Healtcare_Console
                     if (bikeData.Resistance >= 175)
                         SetResistance(bikeData.Resistance - 20);
                 }
-                else if (CooldownState)
-                {
-                    if (bikeData.Resistance != 150)
-                        SetResistance(150);
-                }
-                else
+                else if (!CooldownState)
                     Stop();
 
                 console.AddDataToChart(bikeData.Rpm, bikeData.Pulse, bikeData.Resistance);
@@ -284,16 +256,68 @@ namespace Remote_Healtcare_Console
             return (1.8 * (((watt * 6.1183) / 2) / weight) + 7);
         }
 
-        public double calculateVO2MaX(User user, int shr, int watt)
+        public void CalculateVO2MaX(User user, int shr, int watt)
         {
             int sex;
             if (user.male)
                 sex = 0;
             else
                 sex = 1;
-            double vmax = VO2max(user.age, sex, shr);
+            double vmax = VO2max(user.birthyear, sex, shr);
             double vmai = VO2I(watt, user.weight);
-            return vmax * vmai;
+
+            int age = DateTime.Now.Year - user.birthyear;
+            double factor;
+            if (age < 25)
+                factor = 1.1;
+            else if (age < 35)
+                factor = 1.0;
+            else if (age < 40)
+                factor = 0.87;
+            else if (age < 45)
+                factor = 0.83;
+            else if (age < 50)
+                factor = 0.78;
+            else if (age < 55)
+                factor = 0.75;
+            else if (age < 60)
+                factor = 0.71;
+            else if (age < 65)
+                factor = 0.68;
+            else
+                factor = 0.65;
+
+            double result = vmax * vmai * factor;
+            VO2 = result;
+            console.SetVO2max(result);
+            SecureVO2max();
+        }
+
+        public void SecureVO2max()
+        {
+            for (int i = 0; i < RecordedHF.Count; i++)
+            {
+                if (i > 0)
+                {
+                    if (RecordedHF[i - 1] - RecordedHF[i] > 5 || RecordedHF[i - 1] - RecordedHF[i] < -5)
+                    {
+                        Secure = false;
+                    }
+                }
+            }
+
+            for (int i = 0; i < RecordedResistance.Count; i++)
+            {
+                if (i > 0)
+                {
+                    if (RecordedResistance[i - 1] - RecordedResistance[i] > 5 || RecordedResistance[i - 1] - RecordedResistance[i] < -5)
+                    {
+                        Secure = false;
+                    }
+                }
+            }
+
+            console.SetSecure(Secure);
         }
     }
 }

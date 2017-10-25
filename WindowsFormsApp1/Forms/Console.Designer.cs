@@ -55,6 +55,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.Secure_Lbl = new System.Windows.Forms.Label();
             this.Chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.NewResistence_Lbl = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.RPM_Indication_Picture)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Chart)).BeginInit();
             this.SuspendLayout();
@@ -118,7 +119,6 @@
             // RPM_Indication_Picture
             // 
             this.RPM_Indication_Picture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.RPM_Indication_Picture.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.RPM_Indication_Picture.Image = ((System.Drawing.Image)(resources.GetObject("RPM_Indication_Picture.Image")));
             this.RPM_Indication_Picture.Location = new System.Drawing.Point(26, 60);
             this.RPM_Indication_Picture.Name = "RPM_Indication_Picture";
@@ -220,10 +220,10 @@
             // VO2max_Lbl
             // 
             this.VO2max_Lbl.AutoSize = true;
-            this.VO2max_Lbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.VO2max_Lbl.Location = new System.Drawing.Point(881, 288);
+            this.VO2max_Lbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 35F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.VO2max_Lbl.Location = new System.Drawing.Point(700, 503);
             this.VO2max_Lbl.Name = "VO2max_Lbl";
-            this.VO2max_Lbl.Size = new System.Drawing.Size(129, 76);
+            this.VO2max_Lbl.Size = new System.Drawing.Size(91, 54);
             this.VO2max_Lbl.TabIndex = 40;
             this.VO2max_Lbl.Text = "2.5";
             // 
@@ -231,7 +231,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(827, 225);
+            this.label4.Location = new System.Drawing.Point(415, 498);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(237, 63);
             this.label4.TabIndex = 41;
@@ -244,7 +244,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.Secure_Lbl.AutoSize = true;
             this.Secure_Lbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Secure_Lbl.Location = new System.Drawing.Point(885, 364);
+            this.Secure_Lbl.Location = new System.Drawing.Point(797, 512);
             this.Secure_Lbl.Name = "Secure_Lbl";
             this.Secure_Lbl.Size = new System.Drawing.Size(118, 31);
             this.Secure_Lbl.TabIndex = 42;
@@ -257,7 +257,7 @@
             this.Chart.ChartAreas.Add(chartArea2);
             legend2.Name = "Legend1";
             this.Chart.Legends.Add(legend2);
-            this.Chart.Location = new System.Drawing.Point(26, 513);
+            this.Chart.Location = new System.Drawing.Point(16, 560);
             this.Chart.Name = "Chart";
             series4.ChartArea = "ChartArea1";
             series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
@@ -274,16 +274,28 @@
             this.Chart.Series.Add(series4);
             this.Chart.Series.Add(series5);
             this.Chart.Series.Add(series6);
-            this.Chart.Size = new System.Drawing.Size(1048, 173);
+            this.Chart.Size = new System.Drawing.Size(1048, 245);
             this.Chart.TabIndex = 43;
             this.Chart.Text = "chart1";
+            // 
+            // NewResistence_Lbl
+            // 
+            this.NewResistence_Lbl.AutoSize = true;
+            this.NewResistence_Lbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 35F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NewResistence_Lbl.ForeColor = System.Drawing.Color.Red;
+            this.NewResistence_Lbl.Location = new System.Drawing.Point(797, 373);
+            this.NewResistence_Lbl.Name = "NewResistence_Lbl";
+            this.NewResistence_Lbl.Size = new System.Drawing.Size(201, 54);
+            this.NewResistence_Lbl.TabIndex = 44;
+            this.NewResistence_Lbl.Text = ">>> 275";
             // 
             // Console
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.Highlight;
-            this.ClientSize = new System.Drawing.Size(1101, 707);
+            this.BackColor = System.Drawing.SystemColors.Window;
+            this.ClientSize = new System.Drawing.Size(1101, 817);
+            this.Controls.Add(this.NewResistence_Lbl);
             this.Controls.Add(this.Chart);
             this.Controls.Add(this.Secure_Lbl);
             this.Controls.Add(this.label4);
@@ -337,6 +349,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label Secure_Lbl;
         private System.Windows.Forms.DataVisualization.Charting.Chart Chart;
+        private System.Windows.Forms.Label NewResistence_Lbl;
     }
 }
 

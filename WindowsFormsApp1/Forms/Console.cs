@@ -21,6 +21,8 @@ namespace Remote_Healtcare_Console
         private Client client;
         public User user;
 
+        public int NewResistence, OldResistance;
+
         public Console(Client client, User user)
         {
             InitializeComponent();
@@ -30,6 +32,7 @@ namespace Remote_Healtcare_Console
             combo.Items.Clear();
             combo.Items.Add("Simulator");
             combo.Items.AddRange(SerialPort.GetPortNames());
+            RPM_Indication_Picture.SizeMode = PictureBoxSizeMode.AutoSize;
         }
         
         private void BStart_Click(object sender, EventArgs e)
@@ -118,6 +121,15 @@ namespace Remote_Healtcare_Console
             Application.DoEvents();
         }
 
+        internal void SetNewResistance(int resistance)
+        {
+            this.NewResistence = resistance;
+            if (NewResistence > OldResistance)
+                NewResistence_Lbl.Text = $">>> {resistance}";
+            else
+                NewResistence_Lbl.Text = $"<<< {resistance}";
+        }
+
         public void AddDataToChart(int RPM, int Pulse, int Resistance)
         {
             Chart.Series.FindByName("RPM").Points.AddY(RPM);
@@ -132,10 +144,23 @@ namespace Remote_Healtcare_Console
                 this.BeginInvoke(new Action<string>(SetResistance), new object[] { v });
                 return;
             }
+            OldResistance = int.Parse(v);
+            if (int.Parse(v) != NewResistence)
+            {
+                if (NewResistence_Lbl.ForeColor == Color.White)
+                    NewResistence_Lbl.ForeColor = Color.Red;
+                else
+                    NewResistence_Lbl.ForeColor = Color.White;
+            }
+            else if (NewResistence_Lbl.Text != "")
+                NewResistence_Lbl.Text = "";
             Resistance_Lbl.Text = v;
             Resistance_Lbl.Invalidate();
             Resistance_Lbl.Update();
             Resistance_Lbl.Refresh();
+            NewResistence_Lbl.Invalidate();
+            NewResistence_Lbl.Update();
+            NewResistence_Lbl.Refresh();
         }
 
         internal void SetOldPulse(string v)
