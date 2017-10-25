@@ -237,43 +237,55 @@ namespace Server {
             //});
         }
 
-        private void getOldSessionsName(JObject data) {
-            string path = Directory.GetCurrentDirectory() + $@"\data\{data["hashcode"]}";
-
-            if (Directory.Exists(path)) {
-                dynamic response = new {
+        private void getOldSessionsName(JObject data)
+        {
+            string path = Directory.GetCurrentDirectory() + $@"\ClientData\{data["hashcode"]}";
+            List<String> fileName = new List<string>();
+            if (Directory.Exists(path))
+            {
+                foreach (string s in Directory.GetFiles(path))
+                {
+                    fileName.Add(Path.GetFileName(s));
+                }
+                dynamic response = new
+                {
                     status = "alloldfiles",
-                    data = Directory.GetFiles(path)
+                    data = fileName
                 };
                 writeMessage(response);
             }
-            else {
-                dynamic response = new {
+            else
+            {
+                dynamic response = new
+                {
                     status = "not found"
                 };
                 writeMessage(response);
             }
         }
 
-        private void sendOldSession(JObject data) {
+        private void sendOldSession(JObject data)
+        {
             string hashcode = (string)data["hashcode"];
             string file = (string)data["file"];
-
-            string path = Directory.GetCurrentDirectory() + $@"\data\{hashcode}\{file}";
-            if (File.Exists(path)) {
-                try {
-                    dynamic response = new {
-                        status = "oldsession",
-                        data = File.ReadAllText(path)
-                    };
+            List<BikeData> bikeData;
+            string path = Directory.GetCurrentDirectory() + $@"\ClientData\{hashcode}\{file}";
+            if (File.Exists(path))
+            {
+                try
+                {
+                    dynamic response = JsonConvert.DeserializeObject(File.ReadAllText(path));
                     writeMessage(response);
                 }
-                catch(Exception e) {
+                catch (Exception e)
+                {
                     Console.WriteLine(e.Source);
                 }
             }
-            else {
-                dynamic response = new {
+            else
+            {
+                dynamic response = new
+                {
                     status = "not found"
                 };
                 writeMessage(response);

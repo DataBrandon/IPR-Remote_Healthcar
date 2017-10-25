@@ -12,29 +12,26 @@ namespace UserData {
         private string hashcode;
         public string FullName { get; set; }
         public UserType Type { get; set; }
-        private int age;
-        private bool male;
+        public int age;
+        public bool male;
         public int? maxHF;
-        
-        public User(string username, string password, string fullName, string hashcode, UserType type) {
-            this.username = username;
-            this.password = password;
-            this.FullName = fullName;
-            this.hashcode = hashcode;
-            this.Type = type;
-        }
+        public int weight;
 
-        [Newtonsoft.Json.JsonConstructor]
-        public User(string username, string password, string fullName, string hashcode, UserType type, int age,bool male, int? maxHF)
+        public User(string username, string password, string fullName, string hashcode, UserType type)
         {
             this.username = username;
             this.password = password;
             this.FullName = fullName;
             this.hashcode = hashcode;
             this.Type = type;
-            this.age = age;
-            this.male = male;
-            this.maxHF = maxHF;
+        }
+        public User(string username, string password, string fullName, UserType type)
+        {
+            this.username = username;
+            this.password = password;
+            this.FullName = fullName;
+            makeHashcodeValid(Encoding.Default.GetString(new SHA256Managed().ComputeHash(Encoding.Default.GetBytes(DateTime.UtcNow.Ticks.ToString() + username))));
+            this.Type = type;
         }
 
         public User(string username, string password, string fullName) {
@@ -44,14 +41,45 @@ namespace UserData {
             this.Type = UserType.Client;
             makeHashcodeValid(Encoding.Default.GetString(new SHA256Managed().ComputeHash(Encoding.Default.GetBytes(DateTime.UtcNow.Ticks.ToString() + username))));
         }
-
-        public User(string username, string password, string fullName, UserType type) {
+        
+        public User(string username, string password, string fullName, UserType type, int age, bool male, int weight, int? maxHF)
+        {
             this.username = username;
             this.password = password;
             this.FullName = fullName;
             this.Type = type;
             string test = Encoding.Default.GetString(new SHA256Managed().ComputeHash(Encoding.Default.GetBytes(DateTime.UtcNow.Ticks.ToString() + username)));
             makeHashcodeValid(test);
+            this.age = age;
+            this.male = male;
+            this.maxHF = maxHF;
+            this.weight = weight;
+        }
+
+        [Newtonsoft.Json.JsonConstructor]
+        public User(string username, string password, string hashcode, string fullName, UserType type, int age, bool male, int weight, int? maxHF)
+        {
+            this.username = username;
+            this.password = password;
+            this.FullName = fullName;
+            this.Type = type;
+            this.hashcode = hashcode;
+            this.age = age;
+            this.male = male;
+            this.maxHF = maxHF;
+            this.weight = weight;
+        }
+
+        public User(string username, string password, string fullName, UserType type, int age, bool male, int weight){
+            this.username = username;
+            this.password = password;
+            this.FullName = fullName;
+            this.Type = type;
+            string test = Encoding.Default.GetString(new SHA256Managed().ComputeHash(Encoding.Default.GetBytes(DateTime.UtcNow.Ticks.ToString() + username)));
+            makeHashcodeValid(test);
+            this.age = age;
+            this.male = male;
+            this.weight = weight;
         }
 
         public string Password {
@@ -87,12 +115,20 @@ namespace UserData {
 
         private void makeHashcodeValid(string hash) {
             List<char> forbiddenChars = new List<char>(Path.GetInvalidPathChars());
+            forbiddenChars.Add((char)92);
+            forbiddenChars.Add((char)47);
+            forbiddenChars.Add((char)63);
+            forbiddenChars.Add((char)42);
+            forbiddenChars.Add((char)58);
             string validHashcode = string.Empty;
-            foreach(char c in hash) {
-                if(forbiddenChars.Contains(c)) {
+            foreach (char c in hash)
+            {
+                if (forbiddenChars.Contains(c))
+                {
                     validHashcode += "{";
                 }
-                else {
+                else
+                {
                     validHashcode += c;
                 }
             }

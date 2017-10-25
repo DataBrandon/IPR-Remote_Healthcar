@@ -52,7 +52,7 @@ namespace Server {
                     string username = Encoding.Default.GetString(new SHA256Managed().ComputeHash(Encoding.Default.GetBytes("admin")));
                     users.Add(new User(username, username, "Root", UserType.Doctor));
                     username = Encoding.Default.GetString(new SHA256Managed().ComputeHash(Encoding.Default.GetBytes("test")));
-                    users.Add(new User(username, username, "Patient", UserType.Client));
+                    users.Add(new User(username, username, "Patient", UserType.Client, 18, true, 85));
                     File.WriteAllText(usersPath, JsonConvert.SerializeObject(users));
                 }
             }

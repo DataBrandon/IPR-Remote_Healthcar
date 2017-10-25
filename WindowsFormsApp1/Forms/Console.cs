@@ -28,28 +28,140 @@ namespace Remote_Healtcare_Console
             this.user = user;
             combo = comPorts;
             combo.Items.Clear();
+            combo.Items.Add("Simulator");
             combo.Items.AddRange(SerialPort.GetPortNames());
         }
         
         private void BStart_Click(object sender, EventArgs e)
         {
             combo.Focus();
+            if (combo.SelectedItem.Equals("Simulator"))
+            {
 
-            bike = new Bike(combo.SelectedItem.ToString(), this, client);
-            bike.Start();
+                OpenFileDialog browseFileDialog = new OpenFileDialog();
+                browseFileDialog.Filter = "JSON (.json)|*.json;";
+                browseFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
+
+                if (browseFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    path = Path.GetFullPath(browseFileDialog.FileName);
+                    string json = File.ReadAllText(path);
+                    JArray openedData = (JArray)JsonConvert.DeserializeObject(json);
+
+                    data = (ISet<BikeData>)openedData.ToObject(typeof(ISet<BikeData>));
+                }
+
+                bike = new BikeSimulator(this);
+                bike.Start();
+            }
+            else
+            {
+                bike = new Bike(combo.SelectedItem.ToString(), this, client);
+                bike.Start();
+            }
         }
 
-        public void SetTimerLabel(TimeSpan time)
+        internal void SetTime(string v)
         {
             if (InvokeRequired)
             {
-                this.BeginInvoke(new Action<TimeSpan>(SetTimerLabel), new object[] { time });
+                this.BeginInvoke(new Action<string>(SetTime), new object[] { v });
                 return;
             }
-            Timerlabel.Text = time.ToString();
+            Timerlabel.Text = v;
             Timerlabel.Invalidate();
             Timerlabel.Update();
             Timerlabel.Refresh();
+        }
+
+        internal void SetRPM(string v)
+        {
+            if (InvokeRequired)
+            {
+                this.BeginInvoke(new Action<string>(SetRPM), new object[] { v });
+                return;
+            }
+            Rpm_Lbl.Text = v;
+            Rpm_Lbl.Invalidate();
+            Rpm_Lbl.Update();
+            Rpm_Lbl.Refresh();
+
+            if (int.Parse(v) > 60)
+                RPM_Indication_Picture.Image = Properties.Resources.red_down;
+            else if (int.Parse(v) < 50)
+                RPM_Indication_Picture.Image = Properties.Resources.green_up;
+            else
+                RPM_Indication_Picture.Image = Properties.Resources.keep_on_going;
+            RPM_Indication_Picture.Invalidate();
+            RPM_Indication_Picture.Update();
+            RPM_Indication_Picture.Refresh();
+        }
+
+        internal void SetSecure(bool secure)
+        {
+            if (InvokeRequired)
+            {
+                this.BeginInvoke(new Action<bool>(SetSecure), new object[] { secure });
+                return;
+            }
+            if (secure)
+            {
+                Secure_Lbl.Text = "(Secure)";
+            }
+            else
+            {
+                Secure_Lbl.Text = "(Insecure)";
+            }
+            Secure_Lbl.Invalidate();
+            Secure_Lbl.Update();
+            Secure_Lbl.Refresh();
+            Application.DoEvents();
+        }
+
+        public void AddDataToChart(int RPM, int Pulse, int Resistance)
+        {
+            Chart.Series.FindByName("RPM").Points.AddY(RPM);
+            Chart.Series.FindByName("Pulse").Points.AddY(Pulse);
+            Chart.Series.FindByName("Resistance").Points.AddY((Resistance - 25) * 100 / 375);
+        }
+
+        internal void SetResistance(string v)
+        {
+            if (InvokeRequired)
+            {
+                this.BeginInvoke(new Action<string>(SetResistance), new object[] { v });
+                return;
+            }
+            Resistance_Lbl.Text = v;
+            Resistance_Lbl.Invalidate();
+            Resistance_Lbl.Update();
+            Resistance_Lbl.Refresh();
+        }
+
+        internal void SetOldPulse(string v)
+        {
+            if (InvokeRequired)
+            {
+                this.BeginInvoke(new Action<string>(SetOldPulse), new object[] { v });
+                return;
+            }
+            Old_Pulse_Lbl.Text = v;
+            Old_Pulse_Lbl.Invalidate();
+            Old_Pulse_Lbl.Update();
+            Old_Pulse_Lbl.Refresh();
+        }
+
+        internal void SetPulse(string v)
+        {
+            if (InvokeRequired)
+            {
+                this.BeginInvoke(new Action<string>(SetPulse), new object[] { v });
+                return;
+            }
+            Pulse_Lbl.Text = v;
+            Pulse_Lbl.Invalidate();
+            Pulse_Lbl.Update();
+            Pulse_Lbl.Refresh();
         }
 
         public void SetFaseLabel(string fase)
@@ -65,23 +177,38 @@ namespace Remote_Healtcare_Console
             FaseLabel.Refresh();
         }
 
-        public void SetRPMIndication(int rpm)
+        public void Update(BikeData data, int oldPulse, bool steady)
         {
             if (InvokeRequired)
             {
-                this.BeginInvoke(new Action<int>(SetRPMIndication), new object[] { rpm });
+                this.BeginInvoke(new Action<BikeData, int, bool>(Update), new object[] { data, oldPulse, steady });
                 return;
             }
-            if (rpm > 60)
-                RPM_Indication_Picture.Image = Properties.Resources.red_down;
-            else if(rpm < 50)
-                RPM_Indication_Picture.Image = Properties.Resources.green_up;
-            else
-                RPM_Indication_Picture.Image = Properties.Resources.keep_on_going;
-            RPM_Indication_Picture.Invalidate();
-            RPM_Indication_Picture.Update();
-            RPM_Indication_Picture.Refresh();
+
+            SetSteady(steady);
+            SetTime(data.Time.ToString());
+            SetRPM(data.Rpm.ToString());
+            SetResistance(data.Resistance.ToString());
+            SetPulse(data.Pulse.ToString());
+            SetOldPulse(oldPulse.ToString());
+
             Application.DoEvents();
+        }
+
+        internal void SetSteady(bool steady)
+        {
+            if (InvokeRequired)
+            {
+                this.BeginInvoke(new Action<bool>(SetSteady), new object[] { steady });
+                return;
+            }
+            if (steady)
+                Steady_State.BackColor = Color.Lime;
+            else
+                Steady_State.BackColor = Color.Red;
+            Steady_State.Invalidate();
+            Steady_State.Update();
+            Steady_State.Refresh();
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)
@@ -93,6 +220,20 @@ namespace Remote_Healtcare_Console
         private void Closing(object sender, FormClosingEventArgs e)
         {
             client.SendMessage("bye");
+        }
+
+        internal void SetVO2max(double v)
+        {
+            if (InvokeRequired)
+            {
+                this.BeginInvoke(new Action<double>(SetVO2max), new object[] { v });
+                return;
+            }
+            VO2max_Lbl.Text = v.ToString();
+            VO2max_Lbl.Invalidate();
+            VO2max_Lbl.Update();
+            VO2max_Lbl.Refresh();
+            Application.DoEvents();
         }
     }
 }

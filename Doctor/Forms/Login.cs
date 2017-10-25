@@ -47,7 +47,7 @@ namespace Doctor {
                 bool result = (bool)jObject["access"];
                
                 if (result == true) {
-                    UserType type = (UserType)((int)jObject["doctortype"]);
+                    UserType type = (UserType)((int)jObject["user"]["Type"]);
                     if (type == UserType.Doctor) {
                         Credentials = new User(user.username, user.password, (string)jObject["fullname"], (string)jObject["hashcode"], UserType.Client);
                     }
