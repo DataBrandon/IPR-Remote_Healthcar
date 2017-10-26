@@ -17,20 +17,11 @@ namespace UserData {
         public int? maxHF;
         public int? weight;
 
-        public User(string username, string password, string fullName, string hashcode, UserType type)
-        {
+        public User(string username, string password, string fullName, string hashcode, UserType type) {
             this.username = username;
             this.password = password;
             this.FullName = fullName;
             this.hashcode = hashcode;
-            this.Type = type;
-        }
-        public User(string username, string password, string fullName, UserType type)
-        {
-            this.username = username;
-            this.password = password;
-            this.FullName = fullName;
-            makeHashcodeValid(Encoding.Default.GetString(new SHA256Managed().ComputeHash(Encoding.Default.GetBytes(DateTime.UtcNow.Ticks.ToString() + username))));
             this.Type = type;
         }
 
@@ -48,38 +39,48 @@ namespace UserData {
             this.password = password;
             this.FullName = fullName;
             this.Type = type;
-            string test = Encoding.Default.GetString(new SHA256Managed().ComputeHash(Encoding.Default.GetBytes(DateTime.UtcNow.Ticks.ToString() + username)));
-            makeHashcodeValid(test);
             this.birthyear = age;
             this.male = male;
             this.maxHF = maxHF;
             this.weight = weight;
+            string test = Encoding.Default.GetString(new SHA256Managed().ComputeHash(Encoding.Default.GetBytes(DateTime.UtcNow.Ticks.ToString() + username)));
+            makeHashcodeValid(test);
         }
 
         [Newtonsoft.Json.JsonConstructor]
-        public User(string username, string password, string hashcode, string fullName, UserType type, int? age, bool? male, int? weight, int? maxHF)
+        public User(string username, string password, string fullName, UserType type, string hashcode, int? age, bool? male, int? weight, int? maxHF)
         {
             this.username = username;
             this.password = password;
             this.FullName = fullName;
             this.Type = type;
-            this.hashcode = hashcode;
             this.birthyear = age;
             this.male = male;
             this.maxHF = maxHF;
             this.weight = weight;
+            this.hashcode = hashcode;
         }
 
-        public User(string username, string password, string fullName, UserType type, int? age, bool? male, int? weight){
+        public User(string username, string password, string fullName, UserType type, int? age, bool? male, int? weight)
+        {
+            this.username = username;
+            this.password = password;
+            this.FullName = fullName;
+            this.Type = type;
+            this.birthyear = age;
+            this.male = male;
+            this.weight = weight;
+            string test = Encoding.Default.GetString(new SHA256Managed().ComputeHash(Encoding.Default.GetBytes(DateTime.UtcNow.Ticks.ToString() + username)));
+            makeHashcodeValid(test);
+        }
+
+        public User(string username, string password, string fullName, UserType type) {
             this.username = username;
             this.password = password;
             this.FullName = fullName;
             this.Type = type;
             string test = Encoding.Default.GetString(new SHA256Managed().ComputeHash(Encoding.Default.GetBytes(DateTime.UtcNow.Ticks.ToString() + username)));
             makeHashcodeValid(test);
-            this.birthyear = age;
-            this.male = male;
-            this.weight = weight;
         }
 
         public string Password {
@@ -121,18 +122,30 @@ namespace UserData {
             forbiddenChars.Add((char)42);
             forbiddenChars.Add((char)58);
             string validHashcode = string.Empty;
-            foreach (char c in hash)
-            {
-                if (forbiddenChars.Contains(c))
-                {
+            foreach(char c in hash) {
+                if(forbiddenChars.Contains(c)) {
                     validHashcode += "{";
                 }
-                else
-                {
+                else {
                     validHashcode += c;
                 }
             }
             hashcode = validHashcode;
+        }
+
+        public override bool Equals(object obj) {
+            if(obj is User) {
+                User TempUser = obj as User;
+                if(this.hashcode == TempUser.hashcode) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
         }
     }
 }

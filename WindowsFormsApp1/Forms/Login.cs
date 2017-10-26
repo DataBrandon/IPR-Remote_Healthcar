@@ -47,7 +47,8 @@ namespace Remote_Healtcare_Console
 
                 JObject jObject = client.ReadMessage();
                 string result = (string)jObject.GetValue("access");
-                if (result.Equals("True")) {
+                if (result.Equals("True"))
+                {
                     this.Hide();
                     Form Form1 = new Console(client, (User)jObject["user"].ToObject(typeof(User)));
                     Form1.Closed += (s, args) => this.Close();

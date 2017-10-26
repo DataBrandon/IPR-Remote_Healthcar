@@ -7,46 +7,40 @@ using System.Text;
 using System.Threading.Tasks;
 using UserData;
 
-namespace Server {
-    public class BikeSession {
+namespace Server
+{
+    public class BikeSession
+    {
         private DateTime sessionDateTime;
         private string userHash;
-        public List<BikeData> data { get; set; }
-        public List<BikeData> notSendData { get; set; }
+        public List<BikeData> Data { get; set; }
+        public List<BikeData> LatestData { get; set; }
+        public string pathToSessionFile;
 
-        public BikeSession(string userHash) {
+        public BikeSession(string userHash)
+        {
             this.userHash = userHash;
-            sessionDateTime = DateTime.UtcNow;
-            data = new List<BikeData>();
-            notSendData = new List<BikeData>();
-        }
-
-        public void SaveSessionToFile() {
+            sessionDateTime = DateTime.Now;
+            Data = new List<BikeData>();
+            LatestData = new List<BikeData>();
             string pathToUserDir = Directory.GetCurrentDirectory() + @"\ClientData\" + userHash + @"\";
-            string pathToSessionFile = Path.Combine(pathToUserDir, sessionDateTime.ToString().Replace(":", "-") + ".json");
-            if(!Directory.Exists(pathToUserDir)) {
+            pathToSessionFile = pathToUserDir + sessionDateTime.Day + "-" + sessionDateTime.Month + "-" + sessionDateTime.Year + "  " + sessionDateTime.Hour + "." + sessionDateTime.Minute + "." + sessionDateTime.Second + ".json";
+            if (!Directory.Exists(pathToUserDir))
+            {
                 Directory.CreateDirectory(pathToUserDir);
             }
-            else {
-                File.Create(pathToSessionFile);
-            }
-
-            try {
-                File.WriteAllText(pathToSessionFile ,JsonConvert.SerializeObject(data, Formatting.Indented));
-            }
-            catch(IOException e) {
-                Console.WriteLine(e.StackTrace);
-            }
         }
 
-        public void AddBikeData(BikeData bikeData)
+        public void SaveSessionToFile()
         {
-              data.Add(bikeData);
-        }
-
-    public BikeData GetLatestBikeData()
-        {
-            return data.Last();
+            try
+            {
+                File.WriteAllText(pathToSessionFile, JsonConvert.SerializeObject(Data, Formatting.Indented));
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
     }
 }

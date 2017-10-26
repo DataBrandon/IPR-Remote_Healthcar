@@ -20,8 +20,8 @@ namespace Remote_Healtcare_Console
         public ISet<BikeData> data;
         private Client client;
         public User user;
-
         public int NewResistence, OldResistance;
+        public bool RPMIndacationEnabled;
 
         public Console(Client client, User user)
         {
@@ -59,9 +59,32 @@ namespace Remote_Healtcare_Console
             }
             else
             {
+                client.SendMessage(new
+                {
+                    id = "startrecording",
+                    data = new
+                    {
+                    }
+                });
                 bike = new Bike(combo.SelectedItem.ToString(), this, client);
                 bike.Start();
             }
+        }
+
+        public void FlipRPMIndication(bool enable)
+        {
+            if (InvokeRequired)
+            {
+                this.Invoke(new Action<bool>(FlipRPMIndication), new object[] { enable });
+                return;
+            }
+            this.RPMIndacationEnabled = enable;
+            if(!enable)
+                RPM_Indication_Picture.Image = null;
+            RPM_Indication_Picture.Enabled = enable;
+            RPM_Indication_Picture.Invalidate();
+            RPM_Indication_Picture.Update();
+            RPM_Indication_Picture.Refresh();
         }
 
         internal void SetTime(string v)
@@ -89,15 +112,18 @@ namespace Remote_Healtcare_Console
             Rpm_Lbl.Update();
             Rpm_Lbl.Refresh();
 
-            if (int.Parse(v) > 60)
-                RPM_Indication_Picture.Image = Properties.Resources.red_down;
-            else if (int.Parse(v) < 50)
-                RPM_Indication_Picture.Image = Properties.Resources.green_up;
-            else
-                RPM_Indication_Picture.Image = Properties.Resources.keep_on_going;
-            RPM_Indication_Picture.Invalidate();
-            RPM_Indication_Picture.Update();
-            RPM_Indication_Picture.Refresh();
+            if (RPMIndacationEnabled)
+            {
+                if (int.Parse(v) > 60)
+                    RPM_Indication_Picture.Image = Properties.Resources.red_down;
+                else if (int.Parse(v) < 50)
+                    RPM_Indication_Picture.Image = Properties.Resources.green_up;
+                else
+                    RPM_Indication_Picture.Image = Properties.Resources.keep_on_going;
+                RPM_Indication_Picture.Invalidate();
+                RPM_Indication_Picture.Update();
+                RPM_Indication_Picture.Refresh();
+            }
         }
 
         internal void SetSecure(bool secure)
@@ -128,6 +154,7 @@ namespace Remote_Healtcare_Console
                 NewResistence_Lbl.Text = $">>> {resistance}";
             else
                 NewResistence_Lbl.Text = $"<<< {resistance}";
+            NewResistence_Lbl.ForeColor = Color.Red;
         }
 
         public void AddDataToChart(int RPM, int Pulse, int Resistance)
@@ -145,14 +172,7 @@ namespace Remote_Healtcare_Console
                 return;
             }
             OldResistance = int.Parse(v);
-            if (int.Parse(v) != NewResistence)
-            {
-                if (NewResistence_Lbl.ForeColor == Color.White)
-                    NewResistence_Lbl.ForeColor = Color.Red;
-                else
-                    NewResistence_Lbl.ForeColor = Color.White;
-            }
-            else if (NewResistence_Lbl.Text != "")
+            if (int.Parse(v) == NewResistence && NewResistence_Lbl.Text != "")
             {
                 NewResistence_Lbl.Text = "";
                 NewResistence_Lbl.ForeColor = Color.White;
@@ -214,7 +234,6 @@ namespace Remote_Healtcare_Console
             }
 
             SetSteady(steady);
-            SetTime(data.Time.ToString());
             SetRPM(data.Rpm.ToString());
             SetResistance(data.Resistance.ToString());
             SetPulse(data.Pulse.ToString());

@@ -22,6 +22,7 @@ namespace Remote_Healtcare_Console
         private System.Timers.Timer timer;
         private TimeSpan minusTimeSpan;
         private double VO2;
+        private User user;
 
         private bool WarmingUpState, MainTestState, Steady, Secure;
 
@@ -30,7 +31,7 @@ namespace Remote_Healtcare_Console
             data = console.data;
             count = 0;
             BikeThread = new Thread(Update);
-            timer = new System.Timers.Timer(1000);
+            timer = new System.Timers.Timer(100);
             timer.Elapsed += Timer_Elapsed;
             WarmingUpState = false;
             MainTestState = false;
@@ -66,6 +67,7 @@ namespace Remote_Healtcare_Console
                     {
                         if (data.ElementAt(count).Time.Minutes >= 2 && WarmingUpState)
                         {
+                            console.FlipRPMIndication(true);
                             WarmingUpState = false;
                             MainTestState = true;
                             console.SetFaseLabel("Main test");
@@ -73,33 +75,32 @@ namespace Remote_Healtcare_Console
                         }
                         else if (MainTestState && data.ElementAt(count).Time.Minutes >= 6)
                         {
+                            minusTimeSpan += new TimeSpan(0, 4, 0);
                             MainTestState = false;
+                            console.FlipRPMIndication(false);
                             console.SetFaseLabel("Cooling down");
                             CalculateVO2MaX(console.user, (int)RecordedHF.Average(), (int)RecordedResistance.Max());
                         }
 
                         TimeSpan tempTime = data.ElementAt(count).Time - minusTimeSpan;
 
-                        if (MainTestState)
+                        if (data.ElementAt(count).Time == new TimeSpan(0, 2, 0) || data.ElementAt(count).Time == new TimeSpan(0, 3, 0) || (data.ElementAt(count).Time.Minutes >= 4 && data.ElementAt(count).Time.Minutes < 6 && data.ElementAt(count).Time.Seconds % 15 == 0) || data.ElementAt(count).Time == new TimeSpan(0, 6, 0))
                         {
-                            if (data.ElementAt(count).Time.Seconds == 0 || (data.ElementAt(count).Time.Seconds % 15 == 0 && data.ElementAt(count).Time.Minutes >= 4))
+                            if (RecordedHF.Count > 0)
                             {
-                                if (RecordedHF.Count > 0)
+                                if (RecordedHF.Last() - data.ElementAt(count).Pulse > 5 || RecordedHF.Last() - data.ElementAt(count).Pulse < -5)
                                 {
-                                    if (RecordedHF.Last() - data.ElementAt(count).Pulse > 5 || RecordedHF.Last() - data.ElementAt(count).Pulse < -5)
-                                    {
-                                        Steady = false;
-                                    }
-                                    else
-                                    {
-                                        Steady = true;
-                                    }
+                                    Steady = false;
                                 }
-
-                                RecordedHF.Add(data.ElementAt(count).Pulse);
-                                RecordedResistance.Add(data.ElementAt(count).Resistance);
-                                console.SetOldPulse(RecordedHF.Last().ToString());
+                                else
+                                {
+                                    Steady = true;
+                                }
                             }
+
+                            RecordedHF.Add(data.ElementAt(count).Pulse);
+                            RecordedResistance.Add(data.ElementAt(count).Resistance);
+                            console.SetOldPulse(RecordedHF.Last().ToString());
                         }
 
                         try
@@ -140,13 +141,12 @@ namespace Remote_Healtcare_Console
         }
 
         public override void Start() {
-            //BikeThread.Start();
             WarmingUpState = true;
+            console.FlipRPMIndication(false);
             timer.Start();
         }
 
         public override void Stop() {
-            //BikeThread.Abort();
             timer.Stop();
         }
 
@@ -160,9 +160,9 @@ namespace Remote_Healtcare_Console
             if (user.male == null || user.birthyear == null || user.weight == null)
                 return;
             if ((bool)user.male)
-                vo2max = (0.00212 * watt + 0.299) / (0.769 * shr - 48.5) * 100;
+                vo2max = (174.2 * watt + 4020) / (103.2 * shr - 6299);
             else
-                vo2max = (0.00193 * watt + 0.326) / (0.769 * shr - 56.1) * 100;
+                vo2max = (163.8 * watt + 3780) / (104.4 * shr - 7514);
 
             int age = DateTime.Now.Year - (int)user.birthyear;
             double factor;

@@ -28,12 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Console));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.BStart = new System.Windows.Forms.Button();
             this.comPorts = new System.Windows.Forms.ComboBox();
             this.Status = new System.Windows.Forms.Label();
@@ -120,7 +119,7 @@
             // RPM_Indication_Picture
             // 
             this.RPM_Indication_Picture.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.RPM_Indication_Picture.Image = ((System.Drawing.Image)(resources.GetObject("RPM_Indication_Picture.Image")));
+            this.RPM_Indication_Picture.Image = global::Remote_Healtcare_Console.Properties.Resources.keep_on_going;
             this.RPM_Indication_Picture.Location = new System.Drawing.Point(26, 60);
             this.RPM_Indication_Picture.Name = "RPM_Indication_Picture";
             this.RPM_Indication_Picture.Size = new System.Drawing.Size(376, 435);
@@ -224,9 +223,9 @@
             this.VO2max_Lbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 35F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.VO2max_Lbl.Location = new System.Drawing.Point(700, 503);
             this.VO2max_Lbl.Name = "VO2max_Lbl";
-            this.VO2max_Lbl.Size = new System.Drawing.Size(91, 54);
+            this.VO2max_Lbl.Size = new System.Drawing.Size(40, 54);
             this.VO2max_Lbl.TabIndex = 40;
-            this.VO2max_Lbl.Text = "2.5";
+            this.VO2max_Lbl.Text = "-";
             // 
             // label4
             // 
@@ -247,34 +246,33 @@
             this.Secure_Lbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Secure_Lbl.Location = new System.Drawing.Point(880, 512);
             this.Secure_Lbl.Name = "Secure_Lbl";
-            this.Secure_Lbl.Size = new System.Drawing.Size(118, 31);
+            this.Secure_Lbl.Size = new System.Drawing.Size(0, 31);
             this.Secure_Lbl.TabIndex = 42;
-            this.Secure_Lbl.Text = "(Secure)";
             this.Secure_Lbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Chart
             // 
-            chartArea1.Name = "ChartArea1";
-            this.Chart.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.Chart.Legends.Add(legend1);
+            chartArea2.Name = "ChartArea1";
+            this.Chart.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.Chart.Legends.Add(legend2);
             this.Chart.Location = new System.Drawing.Point(12, 580);
             this.Chart.Name = "Chart";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.Legend = "Legend1";
-            series1.Name = "RPM";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series2.Legend = "Legend1";
-            series2.Name = "Pulse";
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series3.Legend = "Legend1";
-            series3.Name = "Resistance";
-            this.Chart.Series.Add(series1);
-            this.Chart.Series.Add(series2);
-            this.Chart.Series.Add(series3);
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series4.Legend = "Legend1";
+            series4.Name = "RPM";
+            series5.ChartArea = "ChartArea1";
+            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series5.Legend = "Legend1";
+            series5.Name = "Pulse";
+            series6.ChartArea = "ChartArea1";
+            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series6.Legend = "Legend1";
+            series6.Name = "Resistance";
+            this.Chart.Series.Add(series4);
+            this.Chart.Series.Add(series5);
+            this.Chart.Series.Add(series6);
             this.Chart.Size = new System.Drawing.Size(1048, 245);
             this.Chart.TabIndex = 43;
             this.Chart.Text = "chart1";
@@ -286,9 +284,8 @@
             this.NewResistence_Lbl.ForeColor = System.Drawing.Color.Red;
             this.NewResistence_Lbl.Location = new System.Drawing.Point(797, 373);
             this.NewResistence_Lbl.Name = "NewResistence_Lbl";
-            this.NewResistence_Lbl.Size = new System.Drawing.Size(201, 54);
+            this.NewResistence_Lbl.Size = new System.Drawing.Size(0, 54);
             this.NewResistence_Lbl.TabIndex = 44;
-            this.NewResistence_Lbl.Text = ">>> 275";
             // 
             // label6
             // 

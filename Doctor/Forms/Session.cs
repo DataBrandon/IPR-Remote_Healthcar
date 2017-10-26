@@ -70,18 +70,23 @@ namespace Doctor {
         }
 
         private void updateGraphFromOtherThread(List<BikeData> datas) {
-            
-            foreach (BikeData data in datas) {
-                if(data.Time == new TimeSpan(0,2,0) || data.Time == new TimeSpan(0, 3, 0) || (data.Time.Minutes >= 4 && data.Time.Minutes < 6 && data.Time.Seconds % 15 == 0) || data.Time == new TimeSpan(0,6,0))
-                {
-                    RecordedHF.Add(data.Power);
-                    RecordedResistance.Add(data.Resistance);
-                }
-                if (data.Time == new TimeSpan(0, 6, 0))
-                    CalculateVO2MaX(patient, (int)RecordedHF.Average(), (int)RecordedResistance.Max());
+            BikeData bikeData = datas[0];
 
-                updateAll(data);
-                AddToGraphHistory(data);
+            foreach (BikeData data in datas) {
+                if (bikeData.Time != data.Time)
+                {
+                    if (data.Time == new TimeSpan(0, 2, 0) || data.Time == new TimeSpan(0, 3, 0) || (data.Time.Minutes >= 4 && data.Time.Minutes < 6 && data.Time.Seconds % 15 == 0) || data.Time == new TimeSpan(0, 6, 0))
+                    {
+                        RecordedHF.Add(data.Pulse);
+                        RecordedResistance.Add(data.Resistance);
+                    }
+                    if (data.Time == new TimeSpan(0, 6, 0))
+                        CalculateVO2MaX(patient, (int)RecordedHF.Average(), (int)RecordedResistance.Max());
+
+                    updateAll(data);
+                    AddToGraphHistory(data);
+                    bikeData = data;
+                }
             }
         }
 
@@ -154,9 +159,9 @@ namespace Doctor {
             if (user.male == null || user.birthyear == null || user.weight == null)
                 return;
             if ((bool)user.male)
-                vo2max = (0.00212 * watt + 0.299) / (0.769 * shr - 48.5) * 100;
+                vo2max = (174.2 * watt + 4020) / (103.2 * shr - 6299);
             else
-                vo2max = (0.00193 * watt + 0.326) / (0.769 * shr - 56.1) * 100;
+                vo2max = (163.8 * watt + 3780) / (104.4 * shr - 7514);
 
             int age = DateTime.Now.Year - (int)user.birthyear;
             double factor;
@@ -176,74 +181,74 @@ namespace Doctor {
                 factor = 0.65;
 
             double result = vo2max * 1000 / (int)user.weight * factor;
-            SetVO2max(result);
-            
-            bool Secure = true;
-            for (int i = 0; i < RecordedHF.Count; i++)
-            {
-                if (i > 0)
+                SetVO2max(result);
+
+                bool Secure = true;
+                for (int i = 0; i < RecordedHF.Count; i++)
                 {
-                    if (RecordedHF[i - 1] - RecordedHF[i] > 5 || RecordedHF[i - 1] - RecordedHF[i] < -5)
+                    if (i > 0)
                     {
-                        Secure = false;
+                        if (RecordedHF[i - 1] - RecordedHF[i] > 5 || RecordedHF[i - 1] - RecordedHF[i] < -5)
+                        {
+                            Secure = false;
+                        }
+                    }
+                }
+
+                for (int i = 0; i < RecordedResistance.Count; i++)
+                {
+                    if (i > 0)
+                    {
+                        if (RecordedResistance[i - 1] - RecordedResistance[i] > 5 || RecordedResistance[i - 1] - RecordedResistance[i] < -5)
+                        {
+                            Secure = false;
+                        }
+                    }
+                }
+
+                SecureVO2max(Secure);
+            }
+
+                private void SetVO2max(double result)
+                {
+                    if (InvokeRequired)
+                    {
+                        this.BeginInvoke(new Action(() =>
+                        {
+                            VO2max_Lbl.Text = result.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+                            VO2max_Lbl.Invalidate();
+                            VO2max_Lbl.Update();
+                            VO2max_Lbl.Refresh();
+
+                            patientName.Text = patient.FullName;
+                            patientName.Invalidate();
+                            patientName.Update();
+                            patientName.Refresh();
+
+                        }));
+                    }
+                }
+
+                public void SecureVO2max(bool Secure)
+                {
+
+                    if (InvokeRequired)
+                    {
+                        this.BeginInvoke(new Action(() =>
+                        {
+                            if (Secure)
+                            {
+                                Secure_Lbl.Text = "(Secure)";
+                            }
+                            else
+                            {
+                                Secure_Lbl.Text = "(Insecure)";
+                            }
+                            Secure_Lbl.Invalidate();
+                            Secure_Lbl.Update();
+                            Secure_Lbl.Refresh();
+                        }));
                     }
                 }
             }
-
-            for (int i = 0; i < RecordedResistance.Count; i++)
-            {
-                if (i > 0)
-                {
-                    if (RecordedResistance[i - 1] - RecordedResistance[i] > 5 || RecordedResistance[i - 1] - RecordedResistance[i] < -5)
-                    {
-                        Secure = false;
-                    }
-                }
             }
-
-            SecureVO2max(Secure);
-        }
-
-        private void SetVO2max(double result)
-        {
-            if (InvokeRequired)
-            {
-                this.BeginInvoke(new Action(() => 
-                {
-                    VO2max_Lbl.Text = result.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
-                    VO2max_Lbl.Invalidate();
-                    VO2max_Lbl.Update();
-                    VO2max_Lbl.Refresh();
-
-                    patientName.Text = patient.FullName;
-                    patientName.Invalidate();
-                    patientName.Update();
-                    patientName.Refresh();
-
-                }));
-            }
-        }
-
-        public void SecureVO2max(bool Secure)
-        {
-
-            if (InvokeRequired)
-            {
-                this.BeginInvoke(new Action(() => 
-                {
-                    if (Secure)
-                    {
-                        Secure_Lbl.Text = "(Secure)";
-                    }
-                    else
-                    {
-                        Secure_Lbl.Text = "(Insecure)";
-                    }
-                    Secure_Lbl.Invalidate();
-                    Secure_Lbl.Update();
-                    Secure_Lbl.Refresh();
-                }));
-            }
-        }
-    }
-}
